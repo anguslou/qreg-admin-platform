@@ -3,444 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QReg Admin Platform - RegTech Compliance Management</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'qreg-blue': '#1e40af',
-                        'qreg-navy': '#1e293b',
-                        'qreg-accent': '#3b82f6',
-                        'qreg-success': '#10b981',
-                        'qreg-warning': '#f59e0b',
-                        'qreg-danger': '#ef4444'
-                    }
-                }
-            }
+    <title>QReg Admin Platform - Professional Regulatory Compliance Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1B4332 0%, #2D5A47 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
+        .loading {
+            text-align: center;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // Redirect to the main admin dashboard immediately
+        setTimeout(function() {
+            window.location.replace('qreg-admin-dashboard.html');
+        }, 500);
     </script>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Navigation Header -->
-    <nav class="bg-qreg-navy shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <h1 class="text-white text-xl font-bold">QReg Admin</h1>
-                    </div>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#" class="text-white hover:bg-qreg-blue px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
-                        <a href="help-center.html" class="text-gray-300 hover:bg-qreg-blue hover:text-white px-3 py-2 rounded-md text-sm font-medium">Help</a>
-                        <a href="settings-config.html" class="text-gray-300 hover:bg-qreg-blue hover:text-white px-3 py-2 rounded-md text-sm font-medium">Settings</a>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open" class="bg-qreg-blue text-white p-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            <i class="fas fa-user"></i>
-                        </button>
-                        <div x-show="open" @click.away="open = false" x-transition class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                            <div class="py-1">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-                                <a href="settings-config.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <div class="bg-gradient-to-r from-qreg-navy to-qreg-blue">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="text-center">
-                <h1 class="text-4xl font-bold text-white sm:text-5xl md:text-6xl">
-                    QReg Admin Platform
-                </h1>
-                <p class="mt-3 max-w-md mx-auto text-base text-blue-100 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                    Comprehensive RegTech compliance management and regulatory oversight dashboard
-                </p>
-            </div>
-        </div>
+<body>
+    <div class="loading">
+        <div class="spinner"></div>
+        <h1>QReg Admin Platform</h1>
+        <p>Loading professional regulatory compliance dashboard...</p>
     </div>
-
-    <!-- Quick Status Overview -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Platform Overview</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Compliance Status -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-shield-alt text-qreg-success text-2xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">Compliance Score</dt>
-                                    <dd class="text-lg font-medium text-gray-900">98.5%</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 px-5 py-3">
-                        <div class="text-sm">
-                            <span class="font-medium text-qreg-success">+2.3%</span>
-                            <span class="text-gray-500">from last month</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Active Regulations -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-gavel text-qreg-blue text-2xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">Active Regulations</dt>
-                                    <dd class="text-lg font-medium text-gray-900">147</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 px-5 py-3">
-                        <div class="text-sm">
-                            <span class="font-medium text-qreg-blue">12 new</span>
-                            <span class="text-gray-500">this quarter</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Risk Alerts -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-exclamation-triangle text-qreg-warning text-2xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">Risk Alerts</dt>
-                                    <dd class="text-lg font-medium text-gray-900">3</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 px-5 py-3">
-                        <div class="text-sm">
-                            <span class="font-medium text-qreg-warning">2 medium</span>
-                            <span class="text-gray-500">1 low priority</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AI Model Status -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                    <div class="p-5">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-robot text-qreg-accent text-2xl"></i>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 truncate">AI Model Accuracy</dt>
-                                    <dd class="text-lg font-medium text-gray-900">96.2%</dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 px-5 py-3">
-                        <div class="text-sm">
-                            <span class="font-medium text-qreg-success">Online</span>
-                            <span class="text-gray-500">Last trained: 2 days ago</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin Sections Navigation -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Admin Sections</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Help Center -->
-                <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-                                <i class="fas fa-question-circle text-qreg-blue text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">Help Center</h3>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">Access admin guides, tutorials, and support resources for platform management.</p>
-                        <a href="help-center.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-qreg-blue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Access Help Center
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- AI Training Management -->
-                <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="flex-shrink-0 bg-purple-100 rounded-lg p-3">
-                                <i class="fas fa-brain text-purple-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">AI Training</h3>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">Manage model training, bias correction, and quality control for AI compliance systems.</p>
-                        <a href="ai-training.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                            Manage AI Training
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Reports Dashboard -->
-                <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="flex-shrink-0 bg-green-100 rounded-lg p-3">
-                                <i class="fas fa-chart-bar text-qreg-success text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">Reports</h3>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">Generate custom reports, schedule automated reporting, and export compliance data.</p>
-                        <a href="reports-dashboard.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-qreg-success hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            View Reports
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Settings & Configuration -->
-                <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="flex-shrink-0 bg-gray-100 rounded-lg p-3">
-                                <i class="fas fa-cogs text-gray-600 text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">Settings</h3>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">Configure platform settings, user preferences, and API integrations.</p>
-                        <a href="settings-config.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                            Manage Settings
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Regulatory Compliance -->
-                <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="flex-shrink-0 bg-red-100 rounded-lg p-3">
-                                <i class="fas fa-balance-scale text-qreg-danger text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">Compliance</h3>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">Monitor regulatory compliance status, track violations, and manage remediation.</p>
-                        <a href="regulatory-monitor.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-qreg-danger hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                            View Compliance
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Audit Management -->
-                <div class="bg-white overflow-hidden shadow-lg rounded-lg hover:shadow-xl transition-shadow duration-300">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <div class="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
-                                <i class="fas fa-search text-qreg-warning text-xl"></i>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-lg font-medium text-gray-900">Audit Trails</h3>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">Review audit logs, track system changes, and ensure accountability.</p>
-                        <a href="system-admin.html" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-qreg-warning hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
-                            Review Audits
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Activities -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Recent Activities</h2>
-            <div class="bg-white shadow overflow-hidden sm:rounded-md">
-                <ul class="divide-y divide-gray-200">
-                    <li class="px-6 py-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-qreg-success flex items-center justify-center">
-                                        <i class="fas fa-check text-white"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        AI Model Training Completed
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        RegTech compliance model v3.2 training finished with 96.2% accuracy
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center text-sm text-gray-500">
-                                2 hours ago
-                            </div>
-                        </div>
-                    </li>
-                    <li class="px-6 py-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-qreg-blue flex items-center justify-center">
-                                        <i class="fas fa-file-alt text-white"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        Monthly Compliance Report Generated
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        August 2025 regulatory compliance summary report available
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center text-sm text-gray-500">
-                                4 hours ago
-                            </div>
-                        </div>
-                    </li>
-                    <li class="px-6 py-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-qreg-warning flex items-center justify-center">
-                                        <i class="fas fa-exclamation-triangle text-white"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        New Risk Alert - Medium Priority
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        Potential compliance gap detected in financial reporting module
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center text-sm text-gray-500">
-                                6 hours ago
-                            </div>
-                        </div>
-                    </li>
-                    <li class="px-6 py-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-purple-600 flex items-center justify-center">
-                                        <i class="fas fa-users text-white"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        User Access Review Completed
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        Quarterly user permissions audit completed with 3 modifications
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center text-sm text-gray-500">
-                                1 day ago
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-qreg-navy">
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="col-span-2">
-                    <h3 class="text-white text-lg font-semibold mb-4">QReg Admin Platform</h3>
-                    <p class="text-gray-300 text-sm">
-                        Comprehensive RegTech compliance management and regulatory oversight platform designed for enterprise-grade regulatory compliance.
-                    </p>
-                </div>
-                <div>
-                    <h4 class="text-white text-sm font-semibold mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="help-center.html" class="text-gray-300 hover:text-white text-sm">Help Center</a></li>
-                        <li><a href="reports-dashboard.html" class="text-gray-300 hover:text-white text-sm">Reports</a></li>
-                        <li><a href="settings-config.html" class="text-gray-300 hover:text-white text-sm">Settings</a></li>
-                        <li><a href="ai-training.html" class="text-gray-300 hover:text-white text-sm">AI Training</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white text-sm font-semibold mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-300 hover:text-white text-sm">Documentation</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white text-sm">API Reference</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white text-sm">Contact Support</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white text-sm">Status Page</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-8 border-t border-gray-700 pt-8">
-                <p class="text-gray-400 text-sm text-center">
-                    © 2025 QReg Admin Platform. All rights reserved. RegTech compliance management solution.
-                </p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Simple dashboard interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add hover effects and animations
-            const cards = document.querySelectorAll('.shadow-lg');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.classList.add('transform', 'scale-105');
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.classList.remove('transform', 'scale-105');
-                });
-            });
-        });
-    </script>
 </body>
 </html>
