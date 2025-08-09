@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "qreg-admin-platform"
+  }
+}
+EOF < /dev/null

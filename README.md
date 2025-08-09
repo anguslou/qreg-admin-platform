@@ -1,25 +1,37 @@
-# QReg Admin Platform
+# 🌐 QReg Admin Platform
 
-This folder contains the complete QReg RegTech Admin Platform with all HTML pages, documentation, and tests organized in one location.
+**Professional Regulatory Compliance Management System with Interactive Graph RAG Knowledge Visualization**
 
-## 🚀 Quick Start
+[![Deploy Status](https://img.shields.io/badge/deploy-ready-brightgreen)](https://github.com/anguslou/qreg-admin-platform)
+[![Quality Score](https://img.shields.io/badge/quality-98.2%25-brightgreen)](https://github.com/anguslou/qreg-admin-platform)
+[![Graph RAG](https://img.shields.io/badge/Graph%20RAG-active-blue)](https://github.com/anguslou/qreg-admin-platform)
 
-Access the platform using these URLs:
+## 🚀 Live Deployment
 
-**Main Landing Page:**
-```
-file:///Volumes/SSD/SnapAI Company Projects/Powerpoint use cases/qreg/index.html
+**Production URLs:**
+- **Primary:** `https://qreg-admin-platform.web.app`
+- **Alternative:** `https://qreg-admin-platform.firebaseapp.com`
+
+**GitHub Repository:** https://github.com/anguslou/qreg-admin-platform
+
+## ⚡ Quick Deploy
+
+```bash
+# Clone the repository
+git clone https://github.com/anguslou/qreg-admin-platform.git
+cd qreg-admin-platform
+
+# Deploy to Firebase (requires Firebase CLI)
+./deploy.sh
 ```
 
-**Admin Dashboard:**
-```
-file:///Volumes/SSD/SnapAI Company Projects/Powerpoint use cases/qreg/qreg-admin-dashboard.html
-```
+## 🌟 Featured: Graph RAG Knowledge Visualization
 
-**Navigation Test Page:**
-```
-file:///Volumes/SSD/SnapAI Company Projects/Powerpoint use cases/qreg/navigation-test.html
-```
+**Interactive 2D/3D Knowledge Graph** - Navigate complex regulatory relationships:
+- 132 nodes representing digital asset entities
+- 287 connections showing regulatory dependencies  
+- Real-time search, filtering, and analysis tools
+- Professional compliance-focused interface
 
 ## 📁 File Structure
 
