@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Management - QReg Admin</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #FEFEFE;
+            color: #2B2D42;
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #FEFEFE;
+            border-right: 1px solid #EDF2F4;
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 24px 32px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1B4332;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-header {
+            padding: 8px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8D99AE;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #8D99AE;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: #F8F9FA;
+            color: #2B2D42;
+        }
+
+        .nav-item.active {
+            background: #1B4332;
+            color: #FFFFFF;
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #EDF2F4;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #D62828;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1B4332;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 32px;
+        }
+
+        /* Payment Overview Header */
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: linear-gradient(135deg, #1B4332 0%, #2D5A47 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .revenue-overview {
+            display: flex;
+            gap: 48px;
+        }
+
+        .revenue-stat {
+            text-align: center;
+        }
+
+        .revenue-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .revenue-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stripe-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .stripe-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #40916C;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Revenue Metrics Grid */
+        .revenue-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .metric-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1B4332;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #8D99AE;
+            margin-bottom: 8px;
+        }
+
+        .metric-change {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .metric-change.positive {
+            color: #40916C;
+        }
+
+        .metric-change.negative {
+            color: #D62828;
+        }
+
+        /* Payment Tables Grid */
+        .payment-tables {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        /* Transaction Table */
+        .transaction-container {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 24px;
+            border-bottom: 1px solid #EDF2F4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transaction-table th {
+            background: #F8F9FA;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #2B2D42;
+            font-size: 14px;
+            border-bottom: 1px solid #EDF2F4;
+        }
+
+        .transaction-table td {
+            padding: 16px;
+            border-bottom: 1px solid #EDF2F4;
+            font-size: 14px;
+        }
+
+        .transaction-table tbody tr:hover {
+            background: #F8F9FA;
+        }
+
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .customer-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1B4332;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .customer-details {
+            flex: 1;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .customer-email {
+            font-size: 12px;
+            color: #8D99AE;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            color: #1B4332;
+        }
+
+        .transaction-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #E8F5E9;
+            color: #40916C;
+        }
+
+        .status-pending {
+            background: #FFF8E1;
+            color: #F77F00;
+        }
+
+        .status-failed {
+            background: #FFEBEE;
+            color: #D62828;
+        }
+
+        .status-refunded {
+            background: #E3F2FD;
+            color: #277DA1;
+        }
+
+        /* Subscription Management */
+        .subscription-container {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .subscription-list {
+            list-style: none;
+        }
+
+        .subscription-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #F8F9FA;
+        }
+
+        .subscription-item:last-child {
+            border-bottom: none;
+        }
+
+        .subscription-info {
+            flex: 1;
+        }
+
+        .subscription-plan {
+            font-weight: 600;
+            color: #2B2D42;
+            margin-bottom: 4px;
+        }
+
+        .subscription-details {
+            font-size: 12px;
+            color: #8D99AE;
+        }
+
+        .subscription-price {
+            font-weight: 600;
+            color: #1B4332;
+            margin-right: 12px;
+        }
+
+        /* Billing Management Grid */
+        .billing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        /* Invoice Section */
+        .invoice-section {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .invoice-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .invoice-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F8F9FA;
+        }
+
+        .invoice-item:last-child {
+            border-bottom: none;
+        }
+
+        .invoice-details {
+            flex: 1;
+        }
+
+        .invoice-number {
+            font-weight: 600;
+            color: #2B2D42;
+            margin-bottom: 4px;
+        }
+
+        .invoice-meta {
+            font-size: 12px;
+            color: #8D99AE;
+        }
+
+        .invoice-amount {
+            font-weight: 600;
+            color: #1B4332;
+            margin-right: 12px;
+        }
+
+        .invoice-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Stripe Integration Panel */
+        .stripe-panel {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .stripe-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stripe-logo {
+            width: 48px;
+            height: 24px;
+            background: #635BFF;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .stripe-config {
+            display: grid;
+            gap: 16px;
+        }
+
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #F8F9FA;
+            border-radius: 8px;
+        }
+
+        .config-label {
+            font-weight: 500;
+            color: #2B2D42;
+        }
+
+        .config-value {
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #1B4332;
+            font-size: 12px;
+        }
+
+        .config-status {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #1B4332;
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            background: #2D5A47;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1B4332;
+            border: 1px solid #1B4332;
+        }
+
+        .btn-secondary:hover {
+            background: #EDF2F4;
+        }
+
+        .btn-stripe {
+            background: #635BFF;
+            color: #FFFFFF;
+        }
+
+        .btn-stripe:hover {
+            background: #5A52E5;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #EDF2F4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            color: #8D99AE;
+        }
+
+        .modal-close:hover {
+            background: #F8F9FA;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #2B2D42;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #EDF2F4;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #EDF2F4;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        /* Refund Interface */
+        .refund-form {
+            background: #FFF8E1;
+            border: 1px solid #F77F00;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .refund-warning {
+            color: #F77F00;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1199px) {
+            .revenue-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .payment-tables {
+                grid-template-columns: 1fr;
+            }
+            
+            .billing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .revenue-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-content {
+                padding: 16px;
+            }
+            
+            .revenue-overview {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">QReg Admin</div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Business Dashboard</div>
+                <a href="qreg-admin-dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Main Dashboard</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Regulatory Data</div>
+                <a href="regulatory-monitor.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Data Sources Monitor</span>
+                </a>
+                <a href="regulatory-monitor.html#collection-health" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">✅</span>
+                    <span>Collection Health</span>
+                </a>
+                <a href="document-library.html" class="nav-item">
+                    <span class="nav-icon">📄</span>
+                    <span>Document Library</span>
+                </a>
+                <a href="graph-rag.html" class="nav-item">
+                    <span class="nav-icon">🌐</span>
+                    <span>Graph RAG</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">AI System</div>
+                <a href="ai-performance.html" class="nav-item">
+                    <span class="nav-icon">🤖</span>
+                    <span>Performance Dashboard</span>
+                </a>
+                <a href="ai-performance.html#quality-control" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">🎯</span>
+                    <span>Quality Control</span>
+                </a>
+                <a href="ai-performance.html#bias-correction" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">⚖️</span>
+                    <span>Bias Correction</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Users & Subscriptions</div>
+                <a href="user-management.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>User Management</span>
+                </a>
+                <a href="user-management.html#subscription-dashboard" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">💳</span>
+                    <span>Subscription Dashboard</span>
+                </a>
+                <a href="payment-management.html" class="nav-item active">
+                    <span class="nav-icon">💰</span>
+                    <span>Payment Management</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Analytics</div>
+                <a href="analytics-dashboard.html" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span>Business Analytics</span>
+                </a>
+                <a href="analytics-dashboard.html#platform-usage" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">📊</span>
+                    <span>Platform Usage</span>
+                </a>
+                <a href="analytics-dashboard.html#business-intelligence" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">💡</span>
+                    <span>Business Intelligence</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">System Admin</div>
+                <a href="system-admin.html" class="nav-item">
+                    <span class="nav-icon">⚕️</span>
+                    <span>System Health</span>
+                </a>
+                <a href="system-admin.html#alerts" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">🚨</span>
+                    <span>Alerts</span>
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">Payment Management</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notification-badge">
+                        <span>🔔</span>
+                        <span class="notification-count">3</span>
+                    </div>
+                    <div class="profile-menu">
+                        <div class="avatar">JW</div>
+                        <span>John Wong</span>
+                        <span>▼</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Payment Overview Header -->
+                <div class="payment-header">
+                    <div class="revenue-overview">
+                        <div class="revenue-stat">
+                            <div class="revenue-value">$285,247</div>
+                            <div class="revenue-label">Monthly Revenue</div>
+                        </div>
+                        <div class="revenue-stat">
+                            <div class="revenue-value">127</div>
+                            <div class="revenue-label">Active Subscriptions</div>
+                        </div>
+                        <div class="revenue-stat">
+                            <div class="revenue-value">98.2%</div>
+                            <div class="revenue-label">Payment Success Rate</div>
+                        </div>
+                        <div class="revenue-stat">
+                            <div class="revenue-value">$2,245</div>
+                            <div class="revenue-label">Average Revenue Per User</div>
+                        </div>
+                    </div>
+                    <div class="stripe-status">
+                        <div class="stripe-indicator"></div>
+                        <div>
+                            <div style="font-weight: 600;">Stripe Connected</div>
+                            <div style="font-size: 12px; opacity: 0.9;">Last sync: 2 min ago</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Revenue Metrics -->
+                <div class="revenue-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">💳</div>
+                        <div class="metric-value">1,247</div>
+                        <div class="metric-label">Transactions This Month</div>
+                        <div class="metric-change positive">
+                            <span>↗</span>
+                            <span>+12.3% vs last month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">💰</div>
+                        <div class="metric-value">$24,672</div>
+                        <div class="metric-label">Stripe Processing Fees</div>
+                        <div class="metric-change">
+                            <span>2.9% + $0.30 per transaction</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">🔄</div>
+                        <div class="metric-value">12</div>
+                        <div class="metric-label">Failed Payments</div>
+                        <div class="metric-change negative">
+                            <span>↘</span>
+                            <span>-3 vs last month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">↩️</div>
+                        <div class="metric-value">$3,240</div>
+                        <div class="metric-label">Refunds Processed</div>
+                        <div class="metric-change">
+                            <span>1.1% of total revenue</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Tables -->
+                <div class="payment-tables">
+                    <!-- Recent Transactions -->
+                    <div class="transaction-container">
+                        <div class="table-header">
+                            <h3 class="table-title">💳 Recent Transactions</h3>
+                            <div class="table-controls">
+                                <button class="btn btn-secondary" onclick="exportTransactions()">Export</button>
+                                <button class="btn btn-stripe" onclick="syncWithStripe()">Sync Stripe</button>
+                            </div>
+                        </div>
+                        
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Plan</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="customer-info">
+                                            <div class="customer-avatar">CC</div>
+                                            <div class="customer-details">
+                                                <div class="customer-name">CryptoCorp HK</div>
+                                                <div class="customer-email">billing@cryptocorp.hk</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="transaction-amount">$30,000.00</td>
+                                    <td>Enterprise</td>
+                                    <td><span class="transaction-status status-success">Paid</span></td>
+                                    <td>
+                                        <div>Aug 8, 2024</div>
+                                        <div style="font-size: 12px; color: #8D99AE;">2:34 PM</div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 4px;">
+                                            <button class="btn btn-small btn-secondary" onclick="viewTransaction('pi_1234567890')">View</button>
+                                            <button class="btn btn-small btn-secondary" onclick="openModal('refund-modal')">Refund</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="customer-info">
+                                            <div class="customer-avatar">JL</div>
+                                            <div class="customer-details">
+                                                <div class="customer-name">Johnson & Lee Associates</div>
+                                                <div class="customer-email">accounts@johnsonlee.hk</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="transaction-amount">$2,780.00</td>
+                                    <td>Professional</td>
+                                    <td><span class="transaction-status status-success">Paid</span></td>
+                                    <td>
+                                        <div>Aug 8, 2024</div>
+                                        <div style="font-size: 12px; color: #8D99AE;">1:15 PM</div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 4px;">
+                                            <button class="btn btn-small btn-secondary" onclick="viewTransaction('pi_1234567891')">View</button>
+                                            <button class="btn btn-small btn-secondary" onclick="openModal('refund-modal')">Refund</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="customer-info">
+                                            <div class="customer-avatar">BC</div>
+                                            <div class="customer-details">
+                                                <div class="customer-name">BlockChain Ventures</div>
+                                                <div class="customer-email">finance@bcventures.io</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="transaction-amount">$180.00</td>
+                                    <td>Starter</td>
+                                    <td><span class="transaction-status status-pending">Processing</span></td>
+                                    <td>
+                                        <div>Aug 8, 2024</div>
+                                        <div style="font-size: 12px; color: #8D99AE;">12:45 PM</div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 4px;">
+                                            <button class="btn btn-small btn-secondary" onclick="viewTransaction('pi_1234567892')">View</button>
+                                            <button class="btn btn-small btn-secondary" onclick="retryPayment('pi_1234567892')">Retry</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="customer-info">
+                                            <div class="customer-avatar">FT</div>
+                                            <div class="customer-details">
+                                                <div class="customer-name">FinTech Solutions Ltd</div>
+                                                <div class="customer-email">billing@fintech.hk</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="transaction-amount">$2,780.00</td>
+                                    <td>Professional</td>
+                                    <td><span class="transaction-status status-failed">Failed</span></td>
+                                    <td>
+                                        <div>Aug 7, 2024</div>
+                                        <div style="font-size: 12px; color: #8D99AE;">4:22 PM</div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 4px;">
+                                            <button class="btn btn-small btn-secondary" onclick="viewTransaction('pi_1234567893')">View</button>
+                                            <button class="btn btn-small btn-primary" onclick="retryPayment('pi_1234567893')">Retry</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div class="customer-info">
+                                            <div class="customer-avatar">AL</div>
+                                            <div class="customer-details">
+                                                <div class="customer-name">Asia Legal Group</div>
+                                                <div class="customer-email">payments@asialegal.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="transaction-amount">$30,000.00</td>
+                                    <td>Enterprise</td>
+                                    <td><span class="transaction-status status-refunded">Refunded</span></td>
+                                    <td>
+                                        <div>Aug 6, 2024</div>
+                                        <div style="font-size: 12px; color: #8D99AE;">11:30 AM</div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 4px;">
+                                            <button class="btn btn-small btn-secondary" onclick="viewTransaction('pi_1234567894')">View</button>
+                                            <button class="btn btn-small btn-secondary" disabled>Refunded</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div style="padding: 16px; border-top: 1px solid #EDF2F4; display: flex; justify-content: between; align-items: center; color: #8D99AE; font-size: 14px;">
+                            <div>Showing 5 of 1,247 transactions</div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary">← Previous</button>
+                                <button class="btn btn-secondary">Next →</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Subscriptions -->
+                    <div class="subscription-container">
+                        <div class="table-header">
+                            <h3 class="table-title">💳 Active Subscriptions</h3>
+                            <div class="table-controls">
+                                <button class="btn btn-secondary" onclick="manageSubscriptions()">Manage All</button>
+                            </div>
+                        </div>
+                        
+                        <ul class="subscription-list">
+                            <li class="subscription-item">
+                                <div class="subscription-info">
+                                    <div class="subscription-plan">Enterprise Plan</div>
+                                    <div class="subscription-details">6 subscriptions • $30K/month each</div>
+                                </div>
+                                <div class="subscription-price">$180K</div>
+                            </li>
+                            
+                            <li class="subscription-item">
+                                <div class="subscription-info">
+                                    <div class="subscription-plan">Professional Plan</div>
+                                    <div class="subscription-details">32 subscriptions • $2.78K/month each</div>
+                                </div>
+                                <div class="subscription-price">$89K</div>
+                            </li>
+                            
+                            <li class="subscription-item">
+                                <div class="subscription-info">
+                                    <div class="subscription-plan">Starter Plan</div>
+                                    <div class="subscription-details">89 subscriptions • $180/month each</div>
+                                </div>
+                                <div class="subscription-price">$16K</div>
+                            </li>
+                        </ul>
+                        
+                        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #EDF2F4;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <span style="font-weight: 600;">Total MRR:</span>
+                                <span style="font-size: 20px; font-weight: 700; color: #1B4332;">$285,247</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #8D99AE;">
+                                <span>Growth rate:</span>
+                                <span style="color: #40916C; font-weight: 600;">+18.2% MoM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Billing Management -->
+                <div class="billing-grid">
+                    <!-- Invoice Management -->
+                    <div class="invoice-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3 style="font-size: 18px; font-weight: 600; color: #2B2D42;">📄 Recent Invoices</h3>
+                            <button class="btn btn-primary" onclick="generateInvoice()">Generate Invoice</button>
+                        </div>
+                        
+                        <ul class="invoice-list">
+                            <li class="invoice-item">
+                                <div class="invoice-details">
+                                    <div class="invoice-number">INV-2024-0847</div>
+                                    <div class="invoice-meta">CryptoCorp HK • Aug 8, 2024</div>
+                                </div>
+                                <div class="invoice-amount">$30,000.00</div>
+                                <div class="invoice-actions">
+                                    <button class="btn btn-small btn-secondary">View</button>
+                                    <button class="btn btn-small btn-secondary">Download</button>
+                                </div>
+                            </li>
+                            
+                            <li class="invoice-item">
+                                <div class="invoice-details">
+                                    <div class="invoice-number">INV-2024-0846</div>
+                                    <div class="invoice-meta">Johnson & Lee • Aug 8, 2024</div>
+                                </div>
+                                <div class="invoice-amount">$2,780.00</div>
+                                <div class="invoice-actions">
+                                    <button class="btn btn-small btn-secondary">View</button>
+                                    <button class="btn btn-small btn-secondary">Download</button>
+                                </div>
+                            </li>
+                            
+                            <li class="invoice-item">
+                                <div class="invoice-details">
+                                    <div class="invoice-number">INV-2024-0845</div>
+                                    <div class="invoice-meta">Asia Legal Group • Aug 7, 2024</div>
+                                </div>
+                                <div class="invoice-amount">$30,000.00</div>
+                                <div class="invoice-actions">
+                                    <button class="btn btn-small btn-secondary">View</button>
+                                    <button class="btn btn-small btn-secondary">Download</button>
+                                </div>
+                            </li>
+                        </ul>
+                        
+                        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #EDF2F4; text-align: center;">
+                            <button class="btn btn-secondary">View All Invoices</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stripe Integration Panel -->
+                    <div class="stripe-panel">
+                        <div class="stripe-header">
+                            <div class="stripe-logo">Stripe</div>
+                            <h3 style="font-size: 18px; font-weight: 600; color: #2B2D42;">Integration Status</h3>
+                        </div>
+                        
+                        <div class="stripe-config">
+                            <div class="config-item">
+                                <div class="config-label">Connection Status</div>
+                                <span class="config-status status-success">Connected</span>
+                            </div>
+                            
+                            <div class="config-item">
+                                <div class="config-label">Account ID</div>
+                                <div class="config-value">acct_1Nir...</div>
+                            </div>
+                            
+                            <div class="config-item">
+                                <div class="config-label">Webhook Status</div>
+                                <span class="config-status status-success">Active</span>
+                            </div>
+                            
+                            <div class="config-item">
+                                <div class="config-label">Last Sync</div>
+                                <div class="config-value">2 minutes ago</div>
+                            </div>
+                            
+                            <div class="config-item">
+                                <div class="config-label">Payment Methods</div>
+                                <div style="display: flex; gap: 4px;">
+                                    <span style="background: #E8F5E9; color: #40916C; padding: 2px 6px; border-radius: 4px; font-size: 10px;">Card</span>
+                                    <span style="background: #E3F2FD; color: #277DA1; padding: 2px 6px; border-radius: 4px; font-size: 10px;">Bank</span>
+                                    <span style="background: #FFF8E1; color: #F77F00; padding: 2px 6px; border-radius: 4px; font-size: 10px;">Wallet</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #EDF2F4;">
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary" onclick="openModal('stripe-config-modal')">Configure</button>
+                                <button class="btn btn-stripe" onclick="openStripeDashboard()">Open Stripe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Refund Modal -->
+    <div id="refund-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">💰 Process Refund</h2>
+                <button class="modal-close" onclick="closeModal('refund-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 24px;">
+                    <h4 style="margin-bottom: 16px;">Transaction Details</h4>
+                    <div style="background: #F8F9FA; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                            <div>
+                                <div style="font-size: 12px; color: #8D99AE;">Customer</div>
+                                <div style="font-weight: 600;">CryptoCorp HK</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #8D99AE;">Amount Paid</div>
+                                <div style="font-weight: 600;">$30,000.00</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #8D99AE;">Transaction ID</div>
+                                <div style="font-family: monospace; font-size: 12px;">pi_1234567890</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: #8D99AE;">Payment Date</div>
+                                <div style="font-weight: 600;">Aug 8, 2024</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="refund-form">
+                        <div class="refund-warning">
+                            <span>⚠️</span>
+                            <span>Refund processing cannot be undone</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Refund Type</label>
+                            <select class="form-select" id="refund-type">
+                                <option value="full">Full Refund - $30,000.00</option>
+                                <option value="partial">Partial Refund</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="partial-amount" style="display: none;">
+                            <label class="form-label">Partial Refund Amount</label>
+                            <input type="number" class="form-input" placeholder="Enter amount to refund" max="30000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Reason for Refund</label>
+                            <select class="form-select">
+                                <option value="">Select reason</option>
+                                <option value="duplicate">Duplicate Payment</option>
+                                <option value="fraudulent">Fraudulent Transaction</option>
+                                <option value="requested">Customer Requested</option>
+                                <option value="error">Processing Error</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Internal Notes (Optional)</label>
+                            <textarea class="form-input" style="min-height: 80px;" placeholder="Add notes for internal records"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+                        <button class="btn btn-secondary" onclick="closeModal('refund-modal')">Cancel</button>
+                        <button class="btn btn-primary" onclick="processRefund()">Process Refund</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stripe Configuration Modal -->
+    <div id="stripe-config-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🔧 Stripe Configuration</h2>
+                <button class="modal-close" onclick="closeModal('stripe-config-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 24px;">
+                    <div style="background: #E3F2FD; padding: 16px; border-radius: 8px; border-left: 4px solid #277DA1; margin-bottom: 24px;">
+                        <div style="font-weight: 600; color: #277DA1; margin-bottom: 8px;">🔒 Security Notice</div>
+                        <div style="color: #8D99AE; font-size: 14px;">API keys are encrypted and stored securely. Changes require admin approval.</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Environment</label>
+                        <select class="form-select">
+                            <option value="production">Production (Live)</option>
+                            <option value="sandbox">Test Mode</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Publishable Key</label>
+                        <input type="text" class="form-input" value="pk_live_51Nir..." readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Secret Key</label>
+                        <input type="password" class="form-input" value="sk_live_51Nir..." readonly>
+                        <div style="font-size: 12px; color: #8D99AE; margin-top: 4px;">Key is masked for security</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Webhook Endpoint</label>
+                        <input type="text" class="form-input" value="https://qreg.ai/api/stripe/webhook" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Webhook Secret</label>
+                        <input type="password" class="form-input" value="whsec_..." readonly>
+                    </div>
+                    
+                    <div style="background: #F8F9FA; padding: 16px; border-radius: 8px;">
+                        <h4 style="margin-bottom: 12px;">Payment Methods Configuration</h4>
+                        <div style="display: grid; gap: 8px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" checked>
+                                <span>Credit/Debit Cards (Visa, Mastercard, Amex)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" checked>
+                                <span>Bank Transfers (ACH, SEPA)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox">
+                                <span>Digital Wallets (Apple Pay, Google Pay)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox">
+                                <span>Buy Now Pay Later (Klarna, Afterpay)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+                        <button class="btn btn-secondary" onclick="closeModal('stripe-config-modal')">Cancel</button>
+                        <button class="btn btn-primary" onclick="saveStripeConfig()">Save Configuration</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Payment Management Functions
+        function syncWithStripe() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Syncing...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Synced ✓';
+                btn.style.background = '#40916C';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                }, 2000);
+            }, 3000);
+        }
+
+        function exportTransactions() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Exporting...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Download Ready ✓';
+                btn.style.background = '#40916C';
+                btn.style.color = 'white';
+                
+                // Simulate file download
+                const link = document.createElement('a');
+                link.href = 'data:text/csv;charset=utf-8,Transaction Export - Generated on ' + new Date().toLocaleDateString();
+                link.download = 'qreg-transactions-' + new Date().getTime() + '.csv';
+                link.click();
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }, 2000);
+            }, 2000);
+        }
+
+        function viewTransaction(transactionId) {
+            console.log('Viewing transaction:', transactionId);
+            
+            // Simulate opening transaction details
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Loading...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'View Details';
+                btn.disabled = false;
+                // Here you would typically open a detailed transaction modal
+                alert('Transaction Details: ' + transactionId + '\n\nThis would open a detailed view in a production system.');
+            }, 1000);
+        }
+
+        function retryPayment(transactionId) {
+            if (confirm('Retry payment for transaction ' + transactionId + '?')) {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Retrying...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = 'Payment Sent ✓';
+                    btn.style.background = '#40916C';
+                    btn.style.color = 'white';
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                        btn.style.background = '';
+                        btn.style.color = '';
+                    }, 3000);
+                }, 2000);
+            }
+        }
+
+        function processRefund() {
+            const refundType = document.getElementById('refund-type').value;
+            
+            if (confirm('Are you sure you want to process this ' + refundType + ' refund? This action cannot be undone.')) {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Processing...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = 'Refund Processed ✓';
+                    btn.style.background = '#40916C';
+                    
+                    setTimeout(() => {
+                        closeModal('refund-modal');
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                        btn.style.background = '';
+                        
+                        // Update transaction status in the table
+                        alert('Refund processed successfully. Customer will receive confirmation email.');
+                    }, 2000);
+                }, 3000);
+            }
+        }
+
+        function generateInvoice() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Generating...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Invoice Generated ✓';
+                btn.style.background = '#40916C';
+                btn.style.color = 'white';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }, 2000);
+            }, 2000);
+        }
+
+        function openStripeDashboard() {
+            // In a real implementation, this would open Stripe dashboard in new tab
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Opening...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                window.open('https://dashboard.stripe.com', '_blank');
+            }, 1000);
+        }
+
+        function saveStripeConfig() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Configuration Saved ✓';
+                btn.style.background = '#40916C';
+                
+                setTimeout(() => {
+                    closeModal('stripe-config-modal');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                }, 1500);
+            }, 2000);
+        }
+
+        function manageSubscriptions() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Loading...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                alert('This would open the full subscription management interface.');
+            }, 1000);
+        }
+
+        // Dynamic form handling
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle refund type change
+            const refundTypeSelect = document.getElementById('refund-type');
+            const partialAmountDiv = document.getElementById('partial-amount');
+            
+            if (refundTypeSelect && partialAmountDiv) {
+                refundTypeSelect.addEventListener('change', function() {
+                    if (this.value === 'partial') {
+                        partialAmountDiv.style.display = 'block';
+                    } else {
+                        partialAmountDiv.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // Live data updates simulation
+        function updatePaymentMetrics() {
+            // Update transaction count
+            const transactionCount = document.querySelector('.metric-card .metric-value');
+            if (transactionCount && transactionCount.textContent === '1,247') {
+                const newCount = 1247 + Math.floor(Math.random() * 3);
+                transactionCount.textContent = newCount.toLocaleString();
+            }
+            
+            // Update revenue
+            const monthlyRevenue = document.querySelector('.revenue-value');
+            if (monthlyRevenue && monthlyRevenue.textContent.includes('$285,247')) {
+                const baseRevenue = 285247;
+                const variation = Math.floor(Math.random() * 1000) - 500;
+                const newRevenue = baseRevenue + variation;
+                monthlyRevenue.textContent = '$' + newRevenue.toLocaleString();
+            }
+        }
+
+        // Update payment metrics every 30 seconds
+        setInterval(updatePaymentMetrics, 30000);
+
+        // Simulate real-time payment notifications
+        function simulatePaymentNotification() {
+            const notifications = [
+                'New payment received: $2,780 from Johnson & Lee',
+                'Payment failed: $180 from BlockChain Ventures - retrying',
+                'Refund processed: $30,000 to Asia Legal Group'
+            ];
+            
+            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            
+            // In a real app, this would be a toast notification
+            if (Math.random() < 0.1) { // 10% chance every check
+                console.log('Payment Notification:', randomNotification);
+            }
+        }
+
+        // Check for payment notifications every 15 seconds
+        setInterval(simulatePaymentNotification, 15000);
+    </script>
+</body>
+</html>

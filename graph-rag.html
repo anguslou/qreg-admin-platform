@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph RAG - Knowledge Graph Visualization | QReg Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #FEFEFE;
+            color: #2B2D42;
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #FEFEFE;
+            border-right: 1px solid #EDF2F4;
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 24px 32px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1B4332;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-header {
+            padding: 8px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8D99AE;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #8D99AE;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: #F8F9FA;
+            color: #2B2D42;
+        }
+
+        .nav-item.active {
+            background: #1B4332;
+            color: #FFFFFF;
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #EDF2F4;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #8D99AE;
+            font-size: 14px;
+        }
+
+        .breadcrumb-separator {
+            color: #8D99AE;
+        }
+
+        .breadcrumb-current {
+            color: #2B2D42;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-button {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #1B4332;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .header-button:hover {
+            background-color: #2D5A47;
+        }
+
+        /* Graph Container */
+        .graph-container {
+            flex: 1;
+            display: flex;
+            background-color: #F8F9FA;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            width: 320px;
+            background-color: #FFFFFF;
+            border-right: 1px solid #EDF2F4;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .control-section {
+            margin-bottom: 24px;
+        }
+
+        .control-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #8D99AE;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .control-button {
+            flex: 1;
+            padding: 8px 12px;
+            background-color: #F8F9FA;
+            border: 1px solid #EDF2F4;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #2B2D42;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .control-button:hover {
+            background-color: #EDF2F4;
+        }
+
+        .control-button.active {
+            background-color: #1B4332;
+            color: #FFFFFF;
+            border-color: #1B4332;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 36px 10px 12px;
+            border: 1px solid #EDF2F4;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1B4332;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8D99AE;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .filter-checkbox input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .filter-checkbox label {
+            font-size: 14px;
+            color: #2B2D42;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .node-count {
+            font-size: 12px;
+            color: #8D99AE;
+        }
+
+        /* Graph Canvas */
+        .graph-canvas {
+            flex: 1;
+            position: relative;
+            background: #F8F9FA;
+        }
+
+        /* SVG Graph */
+        .graph-svg {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+
+        .graph-svg:active {
+            cursor: grabbing;
+        }
+
+        .node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover {
+            stroke-width: 3px;
+            filter: brightness(1.1);
+        }
+
+        .node.selected {
+            stroke: #D62828;
+            stroke-width: 4px;
+        }
+
+        .node.highlighted {
+            filter: brightness(1.2) drop-shadow(0 0 8px rgba(27, 67, 50, 0.5));
+        }
+
+        .link {
+            stroke: #8D99AE;
+            stroke-width: 2px;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .link.highlighted {
+            stroke: #1B4332;
+            stroke-width: 3px;
+            opacity: 1;
+        }
+
+        .node-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            fill: #2B2D42;
+            text-anchor: middle;
+            pointer-events: none;
+            font-weight: 500;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background-color: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 8px;
+            padding: 20px;
+            width: 320px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            display: none;
+        }
+
+        .info-panel.show {
+            display: block;
+        }
+
+        .info-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .info-panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .info-panel-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #8D99AE;
+            cursor: pointer;
+        }
+
+        .info-panel-type {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: #40916C;
+            color: #FFFFFF;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .info-panel-section {
+            margin-bottom: 16px;
+        }
+
+        .info-panel-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #8D99AE;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .info-panel-value {
+            font-size: 14px;
+            color: #2B2D42;
+            line-height: 1.5;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 8px;
+            padding: 12px 24px;
+            display: flex;
+            gap: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #8D99AE;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        /* Loading State */
+        .loading-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #8D99AE;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #EDF2F4;
+            border-top: 3px solid #1B4332;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1199px) {
+            .control-panel {
+                width: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .control-panel {
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: -100%;
+                height: 100%;
+                transition: left 0.3s ease;
+                z-index: 200;
+            }
+            
+            .control-panel.mobile-open {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">QReg Admin</div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Business Dashboard</div>
+                <a href="qreg-admin-dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Main Dashboard</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Regulatory Data</div>
+                <a href="regulatory-monitor.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Data Sources Monitor</span>
+                </a>
+                <a href="regulatory-monitor.html#collection-health" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">✅</span>
+                    <span>Collection Health</span>
+                </a>
+                <a href="document-library.html" class="nav-item">
+                    <span class="nav-icon">📄</span>
+                    <span>Document Library</span>
+                </a>
+                <a href="graph-rag.html" class="nav-item active">
+                    <span class="nav-icon">🌐</span>
+                    <span>Graph RAG</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">AI System</div>
+                <a href="ai-performance.html" class="nav-item">
+                    <span class="nav-icon">🤖</span>
+                    <span>Performance Dashboard</span>
+                </a>
+                <a href="ai-performance.html#quality-control" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">🎯</span>
+                    <span>Quality Control</span>
+                </a>
+                <a href="ai-performance.html#bias-correction" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">⚖️</span>
+                    <span>Bias Correction</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Users & Subscriptions</div>
+                <a href="user-management.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>User Management</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span>Subscription Dashboard</span>
+                </a>
+                <a href="payment-management.html" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Payment Management</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Analytics</div>
+                <a href="analytics-dashboard.html" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span>Business Analytics</span>
+                </a>
+                <a href="analytics-dashboard.html#platform-usage" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">📊</span>
+                    <span>Platform Usage</span>
+                </a>
+                <a href="analytics-dashboard.html#business-intelligence" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">💡</span>
+                    <span>Business Intelligence</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">System Admin</div>
+                <a href="system-admin.html" class="nav-item">
+                    <span class="nav-icon">⚕️</span>
+                    <span>System Health</span>
+                </a>
+                <a href="system-admin.html#alerts" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">🚨</span>
+                    <span>Alerts</span>
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="breadcrumb">
+                        <span>Dashboard</span>
+                        <span class="breadcrumb-separator">/</span>
+                        <span>Regulatory Data</span>
+                        <span class="breadcrumb-separator">/</span>
+                        <span class="breadcrumb-current">Graph RAG</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-button" onclick="exportGraph()">Export Graph</button>
+                    <button class="header-button" onclick="refreshData()">Refresh Data</button>
+                </div>
+            </header>
+            
+            <!-- Graph Container -->
+            <div class="graph-container">
+                <!-- Control Panel -->
+                <div class="control-panel">
+                    <div class="control-section">
+                        <div class="control-title">View Mode</div>
+                        <div class="control-buttons">
+                            <button class="control-button active" onclick="setViewMode('2d')" id="view-2d">2D View</button>
+                            <button class="control-button" onclick="setViewMode('3d')" id="view-3d">3D View</button>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <div class="control-title">Layout</div>
+                        <div class="control-buttons">
+                            <button class="control-button active" onclick="setLayout('force')" id="layout-force">Force</button>
+                            <button class="control-button" onclick="setLayout('circular')" id="layout-circular">Circular</button>
+                            <button class="control-button" onclick="setLayout('hierarchical')" id="layout-hierarchical">Tree</button>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <div class="control-title">Search Nodes</div>
+                        <div class="search-box">
+                            <input type="text" class="search-input" placeholder="Search digital assets..." id="searchInput">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <div class="control-title">Filter by Type</div>
+                        <div class="filter-group">
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="filter-regulation" checked>
+                                <label for="filter-regulation">
+                                    <span style="color: #1B4332;">●</span> Regulations
+                                    <span class="node-count">(45)</span>
+                                </label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="filter-stablecoin" checked>
+                                <label for="filter-stablecoin">
+                                    <span style="color: #40916C;">●</span> Stablecoins
+                                    <span class="node-count">(23)</span>
+                                </label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="filter-exchange" checked>
+                                <label for="filter-exchange">
+                                    <span style="color: #277DA1;">●</span> Exchanges
+                                    <span class="node-count">(18)</span>
+                                </label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="filter-custody" checked>
+                                <label for="filter-custody">
+                                    <span style="color: #F77F00;">●</span> Custody
+                                    <span class="node-count">(12)</span>
+                                </label>
+                            </div>
+                            <div class="filter-checkbox">
+                                <input type="checkbox" id="filter-compliance" checked>
+                                <label for="filter-compliance">
+                                    <span style="color: #52B788;">●</span> Compliance
+                                    <span class="node-count">(34)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <div class="control-title">Analysis Tools</div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="control-button" onclick="findClusters()">Find Clusters</button>
+                            <button class="control-button" onclick="findShortestPath()">Shortest Path</button>
+                            <button class="control-button" onclick="calculateMetrics()">Network Metrics</button>
+                            <button class="control-button" onclick="resetView()">Reset View</button>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <div class="control-title">Keyboard Shortcuts</div>
+                        <div style="font-size: 11px; color: #8D99AE; line-height: 1.4;">
+                            <div><strong>Click:</strong> Select nodes</div>
+                            <div><strong>Drag:</strong> Pan view</div>
+                            <div><strong>Wheel:</strong> Zoom in/out</div>
+                            <div><strong>Space:</strong> Reset zoom</div>
+                            <div><strong>R:</strong> Reset layout</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graph Canvas -->
+                <div class="graph-canvas">
+                    <div class="loading-state" id="loadingState">
+                        <div class="spinner"></div>
+                        <div>Initializing Graph RAG...</div>
+                    </div>
+                    <svg class="graph-svg" id="graphSvg"></svg>
+                </div>
+
+                <!-- Info Panel -->
+                <div class="info-panel" id="infoPanel">
+                    <div class="info-panel-header">
+                        <div>
+                            <div class="info-panel-title" id="nodeTitle">Node Information</div>
+                            <div class="info-panel-type" id="nodeType">TYPE</div>
+                        </div>
+                        <button class="info-panel-close" onclick="closeInfoPanel()">×</button>
+                    </div>
+
+                    <div class="info-panel-section">
+                        <div class="info-panel-label">Description</div>
+                        <div class="info-panel-value" id="nodeDescription">
+                            Select a node to view detailed information about regulations, entities, and relationships.
+                        </div>
+                    </div>
+
+                    <div class="info-panel-section">
+                        <div class="info-panel-label">Connections</div>
+                        <div class="info-panel-value" id="nodeConnections">0 connections</div>
+                    </div>
+
+                    <div class="info-panel-section">
+                        <div class="info-panel-label">Related Entities</div>
+                        <div class="info-panel-value" id="nodeRelated">None selected</div>
+                    </div>
+                </div>
+
+                <!-- Stats Bar -->
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Nodes:</span>
+                        <span class="stat-value" id="totalNodes">132</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Connections:</span>
+                        <span class="stat-value" id="totalLinks">287</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Clusters:</span>
+                        <span class="stat-value" id="totalClusters">5</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Mode:</span>
+                        <span class="stat-value" id="currentMode">2D View</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        // Global variables
+        let graphData = null;
+        let svg = null;
+        let simulation = null;
+        let selectedNodes = new Set();
+        let currentLayout = 'force';
+        let currentViewMode = '2d';
+
+        // Initialize the graph when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeGraph();
+        });
+
+        // Initialize graph data and visualization
+        function initializeGraph() {
+            // Generate sample regulatory data
+            graphData = generateSampleData();
+            
+            // Initialize SVG
+            svg = d3.select('#graphSvg');
+            
+            // Set up SVG dimensions
+            const container = document.querySelector('.graph-canvas');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            svg.attr('width', width).attr('height', height);
+            
+            // Hide loading state
+            document.getElementById('loadingState').style.display = 'none';
+            
+            // Initialize force simulation
+            setupForceSimulation(width, height);
+            
+            // Render the graph
+            renderGraph();
+            
+            // Set up event handlers
+            setupEventHandlers();
+        }
+
+        // Generate sample regulatory data
+        function generateSampleData() {
+            const nodeTypes = {
+                regulation: { color: '#1B4332', count: 45 },
+                stablecoin: { color: '#40916C', count: 23 },
+                exchange: { color: '#277DA1', count: 18 },
+                custody: { color: '#F77F00', count: 12 },
+                compliance: { color: '#52B788', count: 34 }
+            };
+
+            const nodes = [];
+            const links = [];
+
+            let nodeId = 0;
+
+            // Generate nodes for each type
+            Object.keys(nodeTypes).forEach(type => {
+                const typeInfo = nodeTypes[type];
+                for (let i = 0; i < typeInfo.count; i++) {
+                    nodes.push({
+                        id: nodeId++,
+                        type: type,
+                        color: typeInfo.color,
+                        name: generateNodeName(type, i),
+                        size: Math.random() * 10 + 5,
+                        description: generateNodeDescription(type, i),
+                        connections: []
+                    });
+                }
+            });
+
+            // Generate links
+            for (let i = 0; i < 287; i++) {
+                const source = Math.floor(Math.random() * nodes.length);
+                let target = Math.floor(Math.random() * nodes.length);
+                
+                // Avoid self-links
+                while (target === source) {
+                    target = Math.floor(Math.random() * nodes.length);
+                }
+                
+                // Check if link already exists
+                const existingLink = links.find(link => 
+                    (link.source === source && link.target === target) ||
+                    (link.source === target && link.target === source)
+                );
+                
+                if (!existingLink) {
+                    links.push({
+                        source: source,
+                        target: target,
+                        strength: Math.random() * 0.5 + 0.1
+                    });
+                    
+                    // Update connection counts
+                    nodes[source].connections.push(target);
+                    nodes[target].connections.push(source);
+                }
+            }
+
+            return { nodes, links };
+        }
+
+        // Generate node names based on type
+        function generateNodeName(type, index) {
+            const names = {
+                regulation: [
+                    'SFC Circular 2025/145', 'HKMA Policy P-001', 'Virtual Asset Framework',
+                    'AML Guidelines 2024', 'KYC Requirements', 'Market Conduct Rules',
+                    'Custody Standards', 'Trading Platform Rules', 'Consumer Protection',
+                    'Risk Management Guidelines', 'Capital Requirements', 'Licensing Rules'
+                ],
+                stablecoin: [
+                    'USDT Tether', 'USDC Centre', 'DAI MakerDAO', 'BUSD Binance',
+                    'TrueUSD', 'Paxos Standard', 'Gemini Dollar', 'Reserve Rights',
+                    'Frax', 'Magic Internet Money', 'Liquity USD', 'Origin Dollar'
+                ],
+                exchange: [
+                    'OSL Digital Securities', 'HashKey Exchange', 'Crypto.com',
+                    'Huobi Hong Kong', 'OKCoin', 'FTX (Historical)', 'AAX Exchange',
+                    'Bitfinex', 'Kraken', 'Binance HK', 'Gate.io', 'KuCoin'
+                ],
+                custody: [
+                    'BitGo Trust', 'Coinbase Custody', 'Anchorage Digital',
+                    'Fidelity Digital Assets', 'Standard Custody', 'Prime Trust',
+                    'Kingdom Trust', 'Gemini Custody', 'Bakkt Warehouse', 'OSL Custody',
+                    'HashKey Custody', 'Matrixport Custody'
+                ],
+                compliance: [
+                    'Chainalysis KYC', 'Elliptic Navigator', 'CipherTrace Arsenal',
+                    'Scorechain Analytics', 'Crystal Blockchain', 'Coinfirm AML',
+                    'Blocktrace Compliance', 'Merkle Science', 'Qlue Compliance',
+                    'Solidus Labs', 'ComplyAdvantage', 'IdentityMind Global'
+                ]
+            };
+            
+            const typeNames = names[type] || ['Unknown'];
+            return typeNames[index % typeNames.length] || `${type.charAt(0).toUpperCase() + type.slice(1)} ${index + 1}`;
+        }
+
+        // Generate node descriptions
+        function generateNodeDescription(type, index) {
+            const descriptions = {
+                regulation: 'Regulatory framework governing digital asset operations in Hong Kong',
+                stablecoin: 'USD-pegged digital currency maintaining stable value',
+                exchange: 'Licensed digital asset trading platform',
+                custody: 'Secure storage solution for digital assets',
+                compliance: 'Anti-money laundering and compliance monitoring tool'
+            };
+            
+            return descriptions[type] || 'Digital asset ecosystem entity';
+        }
+
+        // Setup force simulation
+        function setupForceSimulation(width, height) {
+            simulation = d3.forceSimulation(graphData.nodes)
+                .force('link', d3.forceLink(graphData.links).id(d => d.id).strength(0.1))
+                .force('charge', d3.forceManyBody().strength(-100))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(d => d.size + 2));
+        }
+
+        // Render the graph
+        function renderGraph() {
+            // Clear existing content
+            svg.selectAll('*').remove();
+
+            // Add zoom behavior
+            const zoom = d3.zoom()
+                .scaleExtent([0.1, 4])
+                .on('zoom', (event) => {
+                    container.attr('transform', event.transform);
+                });
+
+            svg.call(zoom);
+
+            // Create container for graph elements
+            const container = svg.append('g');
+
+            // Add links
+            const links = container.append('g')
+                .selectAll('line')
+                .data(graphData.links)
+                .enter().append('line')
+                .attr('class', 'link')
+                .attr('stroke-width', d => Math.sqrt(d.strength * 10));
+
+            // Add nodes
+            const nodes = container.append('g')
+                .selectAll('circle')
+                .data(graphData.nodes)
+                .enter().append('circle')
+                .attr('class', 'node')
+                .attr('r', d => d.size)
+                .attr('fill', d => d.color)
+                .attr('stroke', '#fff')
+                .attr('stroke-width', 2)
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended))
+                .on('click', nodeClicked)
+                .on('mouseover', nodeMouseOver)
+                .on('mouseout', nodeMouseOut);
+
+            // Add labels
+            const labels = container.append('g')
+                .selectAll('text')
+                .data(graphData.nodes)
+                .enter().append('text')
+                .attr('class', 'node-label')
+                .text(d => d.name.length > 20 ? d.name.substring(0, 17) + '...' : d.name)
+                .attr('dy', d => d.size + 15);
+
+            // Update simulation
+            simulation.on('tick', () => {
+                links
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+
+                nodes
+                    .attr('cx', d => d.x)
+                    .attr('cy', d => d.y);
+
+                labels
+                    .attr('x', d => d.x)
+                    .attr('y', d => d.y);
+            });
+
+            // Store references for later use
+            window.graphNodes = nodes;
+            window.graphLinks = links;
+            window.graphLabels = labels;
+        }
+
+        // Event handlers
+        function setupEventHandlers() {
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            
+            // Filter functionality
+            document.querySelectorAll('.filter-checkbox input').forEach(checkbox => {
+                checkbox.addEventListener('change', handleFilter);
+            });
+
+            // Window resize
+            window.addEventListener('resize', handleResize);
+        }
+
+        // Handle search
+        function handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            
+            if (searchTerm.length === 0) {
+                // Reset all nodes
+                svg.selectAll('.node').classed('highlighted', false);
+                svg.selectAll('.link').classed('highlighted', false);
+                return;
+            }
+
+            // Find matching nodes
+            const matchingNodes = graphData.nodes.filter(node => 
+                node.name.toLowerCase().includes(searchTerm) ||
+                node.description.toLowerCase().includes(searchTerm)
+            );
+
+            // Highlight matching nodes
+            svg.selectAll('.node')
+                .classed('highlighted', d => matchingNodes.some(n => n.id === d.id));
+
+            // Highlight connected links
+            const matchingNodeIds = matchingNodes.map(n => n.id);
+            svg.selectAll('.link')
+                .classed('highlighted', d => 
+                    matchingNodeIds.includes(d.source.id) || matchingNodeIds.includes(d.target.id)
+                );
+        }
+
+        // Handle filter
+        function handleFilter() {
+            const activeFilters = Array.from(document.querySelectorAll('.filter-checkbox input:checked'))
+                .map(cb => cb.id.replace('filter-', ''));
+
+            svg.selectAll('.node').style('opacity', d => 
+                activeFilters.includes(d.type) ? 1 : 0.2
+            );
+
+            svg.selectAll('.link').style('opacity', d => 
+                activeFilters.includes(d.source.type) && activeFilters.includes(d.target.type) ? 0.6 : 0.1
+            );
+        }
+
+        // Node interaction handlers
+        function nodeClicked(event, d) {
+            event.stopPropagation();
+            
+            // Toggle selection
+            if (selectedNodes.has(d.id)) {
+                selectedNodes.delete(d.id);
+            } else {
+                selectedNodes.add(d.id);
+            }
+            
+            // Update visual selection
+            svg.selectAll('.node')
+                .classed('selected', n => selectedNodes.has(n.id));
+            
+            // Show info panel
+            showNodeInfo(d);
+        }
+
+        function nodeMouseOver(event, d) {
+            // Highlight node and connections
+            svg.selectAll('.node')
+                .style('opacity', n => (n === d || d.connections.includes(n.id)) ? 1 : 0.3);
+            
+            svg.selectAll('.link')
+                .style('opacity', l => (l.source === d || l.target === d) ? 1 : 0.1);
+        }
+
+        function nodeMouseOut(event, d) {
+            // Reset opacity
+            svg.selectAll('.node').style('opacity', 1);
+            svg.selectAll('.link').style('opacity', 0.6);
+        }
+
+        // Show node information
+        function showNodeInfo(node) {
+            document.getElementById('nodeTitle').textContent = node.name;
+            document.getElementById('nodeType').textContent = node.type.toUpperCase();
+            document.getElementById('nodeDescription').textContent = node.description;
+            document.getElementById('nodeConnections').textContent = `${node.connections.length} connections`;
+            
+            const relatedNodes = node.connections.slice(0, 5).map(id => {
+                const relatedNode = graphData.nodes.find(n => n.id === id);
+                return relatedNode ? relatedNode.name : 'Unknown';
+            }).join(', ');
+            
+            document.getElementById('nodeRelated').textContent = relatedNodes || 'None';
+            document.getElementById('infoPanel').classList.add('show');
+        }
+
+        // Close info panel
+        function closeInfoPanel() {
+            document.getElementById('infoPanel').classList.remove('show');
+        }
+
+        // Control functions
+        function setViewMode(mode) {
+            currentViewMode = mode;
+            document.querySelectorAll('[id^="view-"]').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`view-${mode}`).classList.add('active');
+            document.getElementById('currentMode').textContent = mode.toUpperCase() + ' View';
+            
+            if (mode === '3d') {
+                alert('3D mode would require WebGL libraries. This demo shows 2D functionality.');
+                // Reset to 2D
+                setTimeout(() => setViewMode('2d'), 100);
+            }
+        }
+
+        function setLayout(layout) {
+            currentLayout = layout;
+            document.querySelectorAll('[id^="layout-"]').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`layout-${layout}`).classList.add('active');
+            
+            // Apply layout changes
+            switch(layout) {
+                case 'circular':
+                    applyCircularLayout();
+                    break;
+                case 'hierarchical':
+                    applyHierarchicalLayout();
+                    break;
+                default:
+                    applyForceLayout();
+            }
+        }
+
+        function applyCircularLayout() {
+            const centerX = svg.attr('width') / 2;
+            const centerY = svg.attr('height') / 2;
+            const radius = Math.min(centerX, centerY) * 0.8;
+            
+            graphData.nodes.forEach((node, i) => {
+                const angle = (i / graphData.nodes.length) * 2 * Math.PI;
+                node.fx = centerX + radius * Math.cos(angle);
+                node.fy = centerY + radius * Math.sin(angle);
+            });
+            
+            simulation.alpha(0.3).restart();
+        }
+
+        function applyHierarchicalLayout() {
+            // Simple hierarchical layout by type
+            const typeGroups = {};
+            graphData.nodes.forEach(node => {
+                if (!typeGroups[node.type]) typeGroups[node.type] = [];
+                typeGroups[node.type].push(node);
+            });
+            
+            const types = Object.keys(typeGroups);
+            const levelHeight = svg.attr('height') / types.length;
+            
+            types.forEach((type, levelIndex) => {
+                const nodes = typeGroups[type];
+                const levelY = levelHeight * (levelIndex + 0.5);
+                const nodeWidth = svg.attr('width') / (nodes.length + 1);
+                
+                nodes.forEach((node, nodeIndex) => {
+                    node.fx = nodeWidth * (nodeIndex + 1);
+                    node.fy = levelY;
+                });
+            });
+            
+            simulation.alpha(0.3).restart();
+        }
+
+        function applyForceLayout() {
+            // Reset fixed positions
+            graphData.nodes.forEach(node => {
+                node.fx = null;
+                node.fy = null;
+            });
+            simulation.alpha(0.3).restart();
+        }
+
+        // Analysis functions
+        function findClusters() {
+            alert('Cluster analysis: Found 5 distinct regulatory clusters:\n\n• Banking & Monetary (45 nodes)\n• Securities & Trading (38 nodes)\n• Compliance & AML (34 nodes)\n• Digital Assets (23 nodes)\n• Custody Services (12 nodes)');
+        }
+
+        function findShortestPath() {
+            if (selectedNodes.size !== 2) {
+                alert('Please select exactly 2 nodes to find the shortest path between them.');
+                return;
+            }
+            
+            const nodeIds = Array.from(selectedNodes);
+            const node1 = graphData.nodes.find(n => n.id === nodeIds[0]);
+            const node2 = graphData.nodes.find(n => n.id === nodeIds[1]);
+            
+            alert(`Shortest path between "${node1.name}" and "${node2.name}":\n\nPath length: 3 connections\nIntermediate nodes: 2\nPath type: Regulatory compliance chain`);
+        }
+
+        function calculateMetrics() {
+            const nodeCount = graphData.nodes.length;
+            const linkCount = graphData.links.length;
+            const density = (2 * linkCount) / (nodeCount * (nodeCount - 1));
+            
+            alert(`Network Analysis Metrics:\n\n• Nodes: ${nodeCount}\n• Connections: ${linkCount}\n• Network Density: ${(density * 100).toFixed(2)}%\n• Average Degree: ${(linkCount * 2 / nodeCount).toFixed(2)}\n• Connected Components: 5`);
+        }
+
+        function resetView() {
+            // Reset zoom
+            svg.call(d3.zoom().transform, d3.zoomIdentity);
+            
+            // Clear selections
+            selectedNodes.clear();
+            svg.selectAll('.node').classed('selected', false);
+            
+            // Reset layout
+            applyForceLayout();
+            
+            // Clear search
+            document.getElementById('searchInput').value = '';
+            
+            // Reset filters
+            document.querySelectorAll('.filter-checkbox input').forEach(cb => cb.checked = true);
+            handleFilter();
+        }
+
+        // Header button functions
+        function exportGraph() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                nodes: graphData.nodes.length,
+                links: graphData.links.length,
+                layout: currentLayout,
+                viewMode: currentViewMode,
+                selectedNodes: Array.from(selectedNodes),
+                graphData: graphData
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `qreg-graph-rag-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function refreshData() {
+            // Show loading
+            document.getElementById('loadingState').style.display = 'block';
+            
+            setTimeout(() => {
+                // Regenerate data
+                graphData = generateSampleData();
+                
+                // Re-setup simulation
+                const container = document.querySelector('.graph-canvas');
+                setupForceSimulation(container.clientWidth, container.clientHeight);
+                
+                // Re-render
+                renderGraph();
+                
+                // Hide loading
+                document.getElementById('loadingState').style.display = 'none';
+                
+                // Update stats
+                document.getElementById('totalNodes').textContent = graphData.nodes.length;
+                document.getElementById('totalLinks').textContent = graphData.links.length;
+            }, 1000);
+        }
+
+        // Resize handler
+        function handleResize() {
+            const container = document.querySelector('.graph-canvas');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            svg.attr('width', width).attr('height', height);
+            
+            if (simulation) {
+                simulation.force('center', d3.forceCenter(width / 2, height / 2));
+                simulation.alpha(0.1).restart();
+            }
+        }
+
+        // Drag functions
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            switch(event.code) {
+                case 'Space':
+                    event.preventDefault();
+                    resetView();
+                    break;
+                case 'KeyR':
+                    if (!event.target.matches('input')) {
+                        applyForceLayout();
+                    }
+                    break;
+                case 'Escape':
+                    closeInfoPanel();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

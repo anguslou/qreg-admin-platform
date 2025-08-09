@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Analytics Dashboard - QReg Admin</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #FEFEFE;
+            color: #2B2D42;
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #FEFEFE;
+            border-right: 1px solid #EDF2F4;
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 24px 32px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1B4332;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-header {
+            padding: 8px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8D99AE;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #8D99AE;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: #F8F9FA;
+            color: #2B2D42;
+        }
+
+        .nav-item.active {
+            background: #1B4332;
+            color: #FFFFFF;
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #EDF2F4;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #D62828;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1B4332;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 32px;
+        }
+
+        /* Analytics Header */
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: linear-gradient(135deg, #1B4332 0%, #2D5A47 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .analytics-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .analytics-title h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .analytics-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .date-picker {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #40916C, #52B788);
+        }
+
+        .kpi-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1B4332;
+            margin-bottom: 8px;
+        }
+
+        .kpi-label {
+            font-size: 14px;
+            color: #8D99AE;
+            margin-bottom: 8px;
+        }
+
+        .kpi-change {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .kpi-change.positive {
+            color: #40916C;
+        }
+
+        .kpi-change.negative {
+            color: #D62828;
+        }
+
+        /* Analytics Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #EDF2F4;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .chart-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #EDF2F4;
+            background: transparent;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-btn.active {
+            background: #1B4332;
+            color: white;
+            border-color: #1B4332;
+        }
+
+        /* Mock Chart */
+        .mock-chart {
+            height: 300px;
+            position: relative;
+            background: linear-gradient(180deg, 
+                rgba(64,145,108,0.1) 0%, 
+                rgba(64,145,108,0.05) 50%, 
+                transparent 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: end;
+            padding: 20px;
+            gap: 8px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #40916C, #52B788);
+            border-radius: 4px 4px 0 0;
+            min-height: 20px;
+            position: relative;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
+        /* Revenue Chart */
+        .revenue-chart {
+            height: 250px;
+            background: linear-gradient(45deg, 
+                rgba(27,67,50,0.1) 0%, 
+                rgba(45,90,71,0.1) 100%);
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .revenue-trend {
+            text-align: center;
+        }
+
+        .revenue-amount {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1B4332;
+            margin-bottom: 8px;
+        }
+
+        .revenue-period {
+            font-size: 14px;
+            color: #8D99AE;
+        }
+
+        /* Customer Insights */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .insight-card {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 12px;
+        }
+
+        .insight-icon {
+            font-size: 24px;
+        }
+
+        .insight-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        /* User Segments */
+        .segment-list {
+            list-style: none;
+        }
+
+        .segment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F8F9FA;
+        }
+
+        .segment-item:last-child {
+            border-bottom: none;
+        }
+
+        .segment-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .segment-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .segment-stats {
+            text-align: right;
+        }
+
+        .segment-value {
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .segment-change {
+            font-size: 12px;
+            color: #8D99AE;
+        }
+
+        /* Usage Analytics */
+        .usage-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .usage-item {
+            padding: 16px;
+            background: #F8F9FA;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .usage-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1B4332;
+            margin-bottom: 4px;
+        }
+
+        .usage-label {
+            font-size: 12px;
+            color: #8D99AE;
+        }
+
+        /* Geographic Distribution */
+        .geo-list {
+            list-style: none;
+        }
+
+        .geo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .geo-country {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .country-flag {
+            font-size: 20px;
+        }
+
+        .geo-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .geo-bar {
+            width: 80px;
+            height: 8px;
+            background: #EDF2F4;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .geo-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #40916C, #52B788);
+            border-radius: 4px;
+        }
+
+        /* Platform Usage Grid */
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        /* Action Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #1B4332;
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            background: #2D5A47;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1B4332;
+            border: 1px solid #1B4332;
+        }
+
+        .btn-secondary:hover {
+            background: #EDF2F4;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #EDF2F4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            color: #8D99AE;
+        }
+
+        .modal-close:hover {
+            background: #F8F9FA;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        /* Export Controls */
+        .export-controls {
+            margin-top: 32px;
+            padding: 24px;
+            background: #F8F9FA;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .export-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1199px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .insights-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .platform-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">QReg Admin</div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Business Dashboard</div>
+                <a href="qreg-admin-dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Main Dashboard</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Regulatory Data</div>
+                <a href="regulatory-monitor.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Data Sources Monitor</span>
+                </a>
+                <a href="regulatory-monitor.html#collection-health" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">✅</span>
+                    <span>Collection Health</span>
+                </a>
+                <a href="document-library.html" class="nav-item">
+                    <span class="nav-icon">📄</span>
+                    <span>Document Library</span>
+                </a>
+                <a href="graph-rag.html" class="nav-item">
+                    <span class="nav-icon">🌐</span>
+                    <span>Graph RAG</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">AI System</div>
+                <a href="ai-performance.html" class="nav-item">
+                    <span class="nav-icon">🤖</span>
+                    <span>Performance Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">🎯</span>
+                    <span>Quality Control</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">⚖️</span>
+                    <span>Bias Correction</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Users & Subscriptions</div>
+                <a href="user-management.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>User Management</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span>Subscription Dashboard</span>
+                </a>
+                <a href="payment-management.html" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Payment Management</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Analytics</div>
+                <a href="analytics-dashboard.html" class="nav-item active">
+                    <span class="nav-icon">📈</span>
+                    <span>Business Analytics</span>
+                </a>
+                <a href="analytics-dashboard.html#platform-usage" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">📊</span>
+                    <span>Platform Usage</span>
+                </a>
+                <a href="analytics-dashboard.html#business-intelligence" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">💡</span>
+                    <span>Business Intelligence</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">System Admin</div>
+                <a href="system-admin.html" class="nav-item">
+                    <span class="nav-icon">⚕️</span>
+                    <span>System Health</span>
+                </a>
+                <a href="system-admin.html#alerts" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">🚨</span>
+                    <span>Alerts</span>
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">Business Analytics</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notification-badge">
+                        <span>🔔</span>
+                        <span class="notification-count">3</span>
+                    </div>
+                    <div class="profile-menu">
+                        <div class="avatar">JW</div>
+                        <span>John Wong</span>
+                        <span>▼</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Analytics Header -->
+                <div class="analytics-header">
+                    <div class="analytics-title">
+                        <h1>📊 Revenue Analytics & Customer Insights</h1>
+                    </div>
+                    <div class="analytics-controls">
+                        <select class="date-picker">
+                            <option>Last 30 Days</option>
+                            <option>Last 90 Days</option>
+                            <option>Last 6 Months</option>
+                            <option>Last Year</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportAnalytics()">Export Report</button>
+                    </div>
+                </div>
+                
+                <!-- Key Performance Indicators -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-value">$285,247</div>
+                        <div class="kpi-label">Monthly Recurring Revenue</div>
+                        <div class="kpi-change positive">
+                            <span>↗</span>
+                            <span>+18.2% vs last month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-value">127</div>
+                        <div class="kpi-label">Active Paying Subscribers</div>
+                        <div class="kpi-change positive">
+                            <span>↗</span>
+                            <span>+12.4% vs last month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-value">$2,245</div>
+                        <div class="kpi-label">Average Revenue Per User</div>
+                        <div class="kpi-change positive">
+                            <span>↗</span>
+                            <span>+5.1% vs last month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-value">2.8%</div>
+                        <div class="kpi-label">Monthly Churn Rate</div>
+                        <div class="kpi-change negative">
+                            <span>↘</span>
+                            <span>-0.4% vs last month</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Revenue & Growth Charts -->
+                <div class="analytics-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Revenue Growth Trend</h3>
+                            <div class="chart-filters">
+                                <button class="filter-btn active">7D</button>
+                                <button class="filter-btn">30D</button>
+                                <button class="filter-btn">3M</button>
+                                <button class="filter-btn">1Y</button>
+                            </div>
+                        </div>
+                        <div class="mock-chart">
+                            <div class="chart-bar" style="height: 45%;"></div>
+                            <div class="chart-bar" style="height: 62%;"></div>
+                            <div class="chart-bar" style="height: 38%;"></div>
+                            <div class="chart-bar" style="height: 71%;"></div>
+                            <div class="chart-bar" style="height: 85%;"></div>
+                            <div class="chart-bar" style="height: 53%;"></div>
+                            <div class="chart-bar" style="height: 92%;"></div>
+                            <div class="chart-bar" style="height: 78%;"></div>
+                            <div class="chart-bar" style="height: 89%;"></div>
+                            <div class="chart-bar" style="height: 95%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">This Month Revenue</h3>
+                        </div>
+                        <div class="revenue-chart">
+                            <div class="revenue-trend">
+                                <div class="revenue-amount">$285K</div>
+                                <div class="revenue-period">August 2024</div>
+                                <div style="margin-top: 16px; color: #40916C; font-weight: 600;">
+                                    ↗ +18.2% growth
+                                </div>
+                                <div style="margin-top: 8px; font-size: 12px; color: #8D99AE;">
+                                    Target: $300K (+5.2%)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customer Insights -->
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-header">
+                            <span class="insight-icon">👥</span>
+                            <h3 class="insight-title">Customer Segments</h3>
+                        </div>
+                        <ul class="segment-list">
+                            <li class="segment-item">
+                                <div class="segment-info">
+                                    <span class="segment-indicator" style="background: #1B4332;"></span>
+                                    <span>Enterprise</span>
+                                </div>
+                                <div class="segment-stats">
+                                    <div class="segment-value">6 clients</div>
+                                    <div class="segment-change">$180K MRR</div>
+                                </div>
+                            </li>
+                            <li class="segment-item">
+                                <div class="segment-info">
+                                    <span class="segment-indicator" style="background: #40916C;"></span>
+                                    <span>Professional</span>
+                                </div>
+                                <div class="segment-stats">
+                                    <div class="segment-value">32 clients</div>
+                                    <div class="segment-change">$89K MRR</div>
+                                </div>
+                            </li>
+                            <li class="segment-item">
+                                <div class="segment-info">
+                                    <span class="segment-indicator" style="background: #52B788;"></span>
+                                    <span>Starter</span>
+                                </div>
+                                <div class="segment-stats">
+                                    <div class="segment-value">89 clients</div>
+                                    <div class="segment-change">$16K MRR</div>
+                                </div>
+                            </li>
+                        </ul>
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #EDF2F4;">
+                            <button class="btn btn-secondary" onclick="openModal('segments-modal')">View Details</button>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card" id="platform-usage">
+                        <div class="insight-header">
+                            <span class="insight-icon">📊</span>
+                            <h3 class="insight-title">Platform Usage Stats</h3>
+                        </div>
+                        <div class="usage-stats">
+                            <div class="usage-item">
+                                <div class="usage-value">1,247</div>
+                                <div class="usage-label">Daily Queries</div>
+                            </div>
+                            <div class="usage-item">
+                                <div class="usage-value">89.2%</div>
+                                <div class="usage-label">User Satisfaction</div>
+                            </div>
+                            <div class="usage-item">
+                                <div class="usage-value">2.1s</div>
+                                <div class="usage-label">Avg Response Time</div>
+                            </div>
+                            <div class="usage-item">
+                                <div class="usage-value">94.8%</div>
+                                <div class="usage-label">Uptime This Month</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #EDF2F4;">
+                            <button class="btn btn-secondary" onclick="openModal('usage-modal')">Detailed Report</button>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-header">
+                            <span class="insight-icon">🌏</span>
+                            <h3 class="insight-title">Geographic Distribution</h3>
+                        </div>
+                        <ul class="geo-list">
+                            <li class="geo-item">
+                                <div class="geo-country">
+                                    <span class="country-flag">🇭🇰</span>
+                                    <span>Hong Kong</span>
+                                </div>
+                                <div class="geo-stats">
+                                    <span>78%</span>
+                                    <div class="geo-bar">
+                                        <div class="geo-fill" style="width: 78%;"></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="geo-item">
+                                <div class="geo-country">
+                                    <span class="country-flag">🇸🇬</span>
+                                    <span>Singapore</span>
+                                </div>
+                                <div class="geo-stats">
+                                    <span>12%</span>
+                                    <div class="geo-bar">
+                                        <div class="geo-fill" style="width: 12%;"></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="geo-item">
+                                <div class="geo-country">
+                                    <span class="country-flag">🇬🇧</span>
+                                    <span>United Kingdom</span>
+                                </div>
+                                <div class="geo-stats">
+                                    <span>6%</span>
+                                    <div class="geo-bar">
+                                        <div class="geo-fill" style="width: 6%;"></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="geo-item">
+                                <div class="geo-country">
+                                    <span class="country-flag">🇺🇸</span>
+                                    <span>United States</span>
+                                </div>
+                                <div class="geo-stats">
+                                    <span>4%</span>
+                                    <div class="geo-bar">
+                                        <div class="geo-fill" style="width: 4%;"></div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Business Intelligence Section -->
+                <div class="insights-grid" id="business-intelligence">
+                    <div class="insight-card">
+                        <div class="insight-header">
+                            <span class="insight-icon">💡</span>
+                            <h3 class="insight-title">Business Intelligence Dashboard</h3>
+                        </div>
+                        <div class="usage-stats">
+                            <div class="usage-item">
+                                <div class="usage-value">$2.8M</div>
+                                <div class="usage-label">Annual Contract Value</div>
+                            </div>
+                            <div class="usage-item">
+                                <div class="usage-value">127%</div>
+                                <div class="usage-label">Net Revenue Retention</div>
+                            </div>
+                            <div class="usage-item">
+                                <div class="usage-value">18.2%</div>
+                                <div class="usage-label">Revenue Growth Rate</div>
+                            </div>
+                            <div class="usage-item">
+                                <div class="usage-value">89.5%</div>
+                                <div class="usage-label">Customer Health Score</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-header">
+                            <span class="insight-icon">📈</span>
+                            <h3 class="insight-title">Predictive Analytics</h3>
+                        </div>
+                        <ul class="segment-list">
+                            <li class="segment-item">
+                                <div class="segment-info">
+                                    <span class="segment-indicator" style="background: #40916C;"></span>
+                                    <span>Revenue Forecast (Q4)</span>
+                                </div>
+                                <div class="segment-stats">
+                                    <div class="segment-value">$342K</div>
+                                    <div class="segment-change">+20% vs Q3</div>
+                                </div>
+                            </li>
+                            <li class="segment-item">
+                                <div class="segment-info">
+                                    <span class="segment-indicator" style="background: #1B4332;"></span>
+                                    <span>Customer Lifetime Value</span>
+                                </div>
+                                <div class="segment-stats">
+                                    <div class="segment-value">$28.5K</div>
+                                    <div class="segment-change">+12% vs Q3</div>
+                                </div>
+                            </li>
+                            <li class="segment-item">
+                                <div class="segment-info">
+                                    <span class="segment-indicator" style="background: #52B788;"></span>
+                                    <span>Market Expansion</span>
+                                </div>
+                                <div class="segment-stats">
+                                    <div class="segment-value">3 markets</div>
+                                    <div class="segment-change">Southeast Asia</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Platform Usage Detail Grid -->
+                <div class="platform-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Feature Usage Distribution</h3>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="margin-bottom: 16px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span>Regulatory Search</span>
+                                    <span style="font-weight: 600;">89%</span>
+                                </div>
+                                <div style="width: 100%; height: 8px; background: #EDF2F4; border-radius: 4px;">
+                                    <div style="width: 89%; height: 100%; background: #40916C; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 16px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span>AI Chatbot</span>
+                                    <span style="font-weight: 600;">76%</span>
+                                </div>
+                                <div style="width: 100%; height: 8px; background: #EDF2F4; border-radius: 4px;">
+                                    <div style="width: 76%; height: 100%; background: #52B788; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 16px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span>Document Analysis</span>
+                                    <span style="font-weight: 600;">64%</span>
+                                </div>
+                                <div style="width: 100%; height: 8px; background: #EDF2F4; border-radius: 4px;">
+                                    <div style="width: 64%; height: 100%; background: #277DA1; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span>Compliance Monitoring</span>
+                                    <span style="font-weight: 600;">42%</span>
+                                </div>
+                                <div style="width: 100%; height: 8px; background: #EDF2F4; border-radius: 4px;">
+                                    <div style="width: 42%; height: 100%; background: #F77F00; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Recent Activity Insights</h3>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 14px; color: #8D99AE; margin-bottom: 4px;">Peak Usage Time</div>
+                                <div style="font-size: 20px; font-weight: 600; color: #1B4332;">2:00 PM - 4:00 PM HKT</div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 14px; color: #8D99AE; margin-bottom: 4px;">Most Searched Regulations</div>
+                                <div style="font-size: 16px; font-weight: 600; color: #2B2D42;">SFC Licensing Requirements</div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 14px; color: #8D99AE; margin-bottom: 4px;">User Engagement Score</div>
+                                <div style="font-size: 20px; font-weight: 600; color: #40916C;">8.7/10</div>
+                            </div>
+                            
+                            <div>
+                                <div style="font-size: 14px; color: #8D99AE; margin-bottom: 4px;">Customer Support Tickets</div>
+                                <div style="font-size: 20px; font-weight: 600; color: #D62828;">3 open</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Export Controls -->
+                <div class="export-controls">
+                    <div class="export-info">
+                        <span>📊</span>
+                        <div>
+                            <div style="font-weight: 600;">Analytics Report Ready</div>
+                            <div style="font-size: 12px; color: #8D99AE;">Data current as of 2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="export-actions">
+                        <button class="btn btn-secondary" onclick="scheduleReport()">Schedule Reports</button>
+                        <button class="btn btn-primary" onclick="exportAnalytics()">Export Full Report</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Customer Segments Modal -->
+    <div id="segments-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Customer Segment Analysis</h2>
+                <button class="modal-close" onclick="closeModal('segments-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 24px;">
+                    <h4 style="margin-bottom: 16px;">Segment Performance Comparison</h4>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                        <div style="padding: 16px; border: 1px solid #EDF2F4; border-radius: 8px; text-align: center;">
+                            <h5 style="color: #1B4332; margin-bottom: 12px;">Enterprise</h5>
+                            <div style="font-size: 24px; font-weight: 700; color: #1B4332; margin-bottom: 8px;">$30,000</div>
+                            <div style="font-size: 12px; color: #8D99AE;">Average Contract Value</div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #40916C;">98.2% retention rate</div>
+                        </div>
+                        
+                        <div style="padding: 16px; border: 1px solid #EDF2F4; border-radius: 8px; text-align: center;">
+                            <h5 style="color: #40916C; margin-bottom: 12px;">Professional</h5>
+                            <div style="font-size: 24px; font-weight: 700; color: #40916C; margin-bottom: 8px;">$2,780</div>
+                            <div style="font-size: 12px; color: #8D99AE;">Average Contract Value</div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #40916C;">91.5% retention rate</div>
+                        </div>
+                        
+                        <div style="padding: 16px; border: 1px solid #EDF2F4; border-radius: 8px; text-align: center;">
+                            <h5 style="color: #52B788; margin-bottom: 12px;">Starter</h5>
+                            <div style="font-size: 24px; font-weight: 700; color: #52B788; margin-bottom: 8px;">$180</div>
+                            <div style="font-size: 12px; color: #8D99AE;">Average Contract Value</div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #F77F00;">76.8% retention rate</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="margin-bottom: 16px;">Upgrade Opportunities</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 12px; background: #F8F9FA; border-radius: 8px; margin-bottom: 8px;">
+                            <div style="font-weight: 600;">12 Starter users</div>
+                            <div style="font-size: 14px; color: #8D99AE;">Heavy usage pattern, ideal for Professional upgrade</div>
+                        </li>
+                        <li style="padding: 12px; background: #F8F9FA; border-radius: 8px; margin-bottom: 8px;">
+                            <div style="font-weight: 600;">4 Professional users</div>
+                            <div style="font-size: 14px; color: #8D99AE;">Enterprise feature requests, potential Enterprise candidates</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Details Modal -->
+    <div id="usage-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Platform Usage Detailed Report</h2>
+                <button class="modal-close" onclick="closeModal('usage-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 24px;">
+                    <h4 style="margin-bottom: 16px;">Daily Usage Patterns</h4>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 16px;">
+                        <div style="text-align: center; padding: 12px; background: #E8F5E9; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #8D99AE;">Mon</div>
+                            <div style="font-weight: 600; color: #40916C;">1,847</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: #F0F4F8; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #8D99AE;">Tue</div>
+                            <div style="font-weight: 600; color: #277DA1;">1,654</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: #E8F5E9; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #8D99AE;">Wed</div>
+                            <div style="font-weight: 600; color: #40916C;">1,923</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: #E8F5E9; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #8D99AE;">Thu</div>
+                            <div style="font-weight: 600; color: #40916C;">2,156</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: #E8F5E9; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #8D99AE;">Fri</div>
+                            <div style="font-weight: 600; color: #40916C;">1,789</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: #FFF8E1; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #8D99AE;">Sat</div>
+                            <div style="font-weight: 600; color: #F77F00;">892</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: #FFF8E1; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #8D99AE;">Sun</div>
+                            <div style="font-weight: 600; color: #F77F00;">634</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="margin-bottom: 16px;">Performance Metrics Detail</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                        <div>
+                            <div style="font-size: 14px; color: #8D99AE; margin-bottom: 8px;">Response Time Distribution</div>
+                            <div style="font-size: 12px; margin-bottom: 4px;">Under 1s: <span style="font-weight: 600;">45%</span></div>
+                            <div style="font-size: 12px; margin-bottom: 4px;">1-3s: <span style="font-weight: 600;">38%</span></div>
+                            <div style="font-size: 12px; margin-bottom: 4px;">3-5s: <span style="font-weight: 600;">12%</span></div>
+                            <div style="font-size: 12px;">Over 5s: <span style="font-weight: 600;">5%</span></div>
+                        </div>
+                        
+                        <div>
+                            <div style="font-size: 14px; color: #8D99AE; margin-bottom: 8px;">User Satisfaction Breakdown</div>
+                            <div style="font-size: 12px; margin-bottom: 4px;">Excellent (5★): <span style="font-weight: 600;">67%</span></div>
+                            <div style="font-size: 12px; margin-bottom: 4px;">Good (4★): <span style="font-weight: 600;">22%</span></div>
+                            <div style="font-size: 12px; margin-bottom: 4px;">Average (3★): <span style="font-weight: 600;">8%</span></div>
+                            <div style="font-size: 12px;">Poor (1-2★): <span style="font-weight: 600;">3%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Export functionality
+        function exportAnalytics() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Generating...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Download Ready ✓';
+                btn.style.background = '#40916C';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                    
+                    // Simulate file download
+                    const link = document.createElement('a');
+                    link.href = 'data:text/csv;charset=utf-8,Analytics Report - Generated on ' + new Date().toLocaleDateString();
+                    link.download = 'qreg-analytics-report-' + new Date().getTime() + '.csv';
+                    link.click();
+                }, 1500);
+            }, 2000);
+        }
+
+        // Schedule Report functionality
+        function scheduleReport() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Scheduling...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Scheduled ✓';
+                btn.style.background = '#40916C';
+                btn.style.color = 'white';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }, 2000);
+            }, 1500);
+        }
+
+        // Filter button interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        // Live data simulation
+        function updateLiveData() {
+            // Simulate real-time updates to KPI values
+            const kpiValues = document.querySelectorAll('.kpi-value');
+            kpiValues.forEach(kpi => {
+                if (kpi.textContent.includes('$')) {
+                    // Revenue fluctuation
+                    const baseValue = 285247;
+                    const variation = Math.floor(Math.random() * 1000) - 500;
+                    const newValue = baseValue + variation;
+                    kpi.textContent = '$' + newValue.toLocaleString();
+                }
+            });
+        }
+
+        // Update live data every 30 seconds
+        setInterval(updateLiveData, 30000);
+        
+        // Preserve sidebar scroll position
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            
+            // Restore scroll position on page load
+            const savedScrollPos = sessionStorage.getItem('sidebarScrollPos');
+            if (savedScrollPos && sidebar) {
+                sidebar.scrollTop = parseInt(savedScrollPos);
+            }
+            
+            // Save scroll position before page unload
+            window.addEventListener('beforeunload', function() {
+                if (sidebar) {
+                    sessionStorage.setItem('sidebarScrollPos', sidebar.scrollTop);
+                }
+            });
+            
+            // Prevent navigation when clicking on active page link
+            const activeLink = document.querySelector('.nav-item.active');
+            if (activeLink) {
+                activeLink.addEventListener('click', function(e) {
+                    const currentPath = window.location.pathname.split('/').pop().split('#')[0];
+                    const linkPath = this.getAttribute('href').split('#')[0];
+                    if (currentPath === linkPath) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

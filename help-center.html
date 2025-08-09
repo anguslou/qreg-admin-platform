@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - QReg Admin Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'qreg-blue': '#1e40af',
+                        'qreg-navy': '#1e293b',
+                        'qreg-accent': '#3b82f6',
+                        'qreg-success': '#10b981',
+                        'qreg-warning': '#f59e0b',
+                        'qreg-danger': '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Header -->
+    <nav class="bg-qreg-navy shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html" class="text-white text-xl font-bold">QReg Admin</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-gray-300 hover:bg-qreg-blue hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="#" class="text-white bg-qreg-blue px-3 py-2 rounded-md text-sm font-medium">Help</a>
+                        <a href="settings-config.html" class="text-gray-300 hover:bg-qreg-blue hover:text-white px-3 py-2 rounded-md text-sm font-medium">Settings</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="bg-qreg-blue text-white p-2 rounded-full hover:bg-blue-700">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <div x-show="open" @click.away="open = false" x-transition class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                            <div class="py-1">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                                <a href="settings-config.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <nav class="flex" aria-label="Breadcrumb">
+                        <ol class="flex items-center space-x-4">
+                            <li>
+                                <div>
+                                    <a href="index.html" class="text-gray-400 hover:text-gray-500">
+                                        <i class="fas fa-home"></i>
+                                        <span class="sr-only">Home</span>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex items-center">
+                                    <i class="fas fa-chevron-right text-gray-300"></i>
+                                    <span class="ml-4 text-sm font-medium text-gray-900">Help Center</span>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-qreg-blue to-qreg-accent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-white mb-4">Help Center</h1>
+                <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+                    Find guides, tutorials, and support resources for the QReg Admin Platform
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-2xl mx-auto">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+                <input type="text" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-qreg-blue focus:border-qreg-blue" placeholder="Search help articles...">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <button class="bg-qreg-blue text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Categories -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Getting Started -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-qreg-blue p-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-rocket text-white text-2xl"></i>
+                        <h3 class="ml-4 text-xl font-semibold text-white">Getting Started</h3>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-qreg-blue hover:underline">Platform Overview</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Initial Setup Guide</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">User Account Management</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Basic Navigation</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">First Steps Checklist</a></li>
+                    </ul>
+                    <div class="mt-6">
+                        <a href="#" class="text-sm text-gray-500 hover:text-qreg-blue">View all articles →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compliance Management -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-qreg-success p-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                        <h3 class="ml-4 text-xl font-semibold text-white">Compliance Management</h3>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-qreg-blue hover:underline">Setting Up Compliance Rules</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Monitoring Compliance Status</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Risk Assessment Tools</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Violation Management</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Remediation Workflows</a></li>
+                    </ul>
+                    <div class="mt-6">
+                        <a href="#" class="text-sm text-gray-500 hover:text-qreg-blue">View all articles →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Training -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-purple-600 p-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-brain text-white text-2xl"></i>
+                        <h3 class="ml-4 text-xl font-semibold text-white">AI Training</h3>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-qreg-blue hover:underline">Model Training Basics</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Bias Detection & Correction</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Quality Control Processes</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Performance Monitoring</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Model Deployment Guide</a></li>
+                    </ul>
+                    <div class="mt-6">
+                        <a href="ai-training.html" class="text-sm text-gray-500 hover:text-qreg-blue">View AI Training →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports & Analytics -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-qreg-warning p-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-chart-bar text-white text-2xl"></i>
+                        <h3 class="ml-4 text-xl font-semibold text-white">Reports & Analytics</h3>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-qreg-blue hover:underline">Creating Custom Reports</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Scheduled Reporting</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Data Export Options</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Dashboard Customization</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Analytics Best Practices</a></li>
+                    </ul>
+                    <div class="mt-6">
+                        <a href="reports-dashboard.html" class="text-sm text-gray-500 hover:text-qreg-blue">View Reports Dashboard →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Administration -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-gray-600 p-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-cogs text-white text-2xl"></i>
+                        <h3 class="ml-4 text-xl font-semibold text-white">System Administration</h3>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-qreg-blue hover:underline">User Management</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Role-Based Access Control</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">System Configuration</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">API Integration</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Security Settings</a></li>
+                    </ul>
+                    <div class="mt-6">
+                        <a href="settings-config.html" class="text-sm text-gray-500 hover:text-qreg-blue">View Settings →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Troubleshooting -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="bg-qreg-danger p-6">
+                    <div class="flex items-center">
+                        <i class="fas fa-tools text-white text-2xl"></i>
+                        <h3 class="ml-4 text-xl font-semibold text-white">Troubleshooting</h3>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-qreg-blue hover:underline">Common Issues & Solutions</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Error Code Reference</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Performance Optimization</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">Data Recovery</a></li>
+                        <li><a href="#" class="text-qreg-blue hover:underline">System Diagnostics</a></li>
+                    </ul>
+                    <div class="mt-6">
+                        <a href="#" class="text-sm text-gray-500 hover:text-qreg-blue">View all articles →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Articles -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8">Popular Articles</h2>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul class="divide-y divide-gray-200">
+                <li>
+                    <a href="#" class="block hover:bg-gray-50">
+                        <div class="px-6 py-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-medium text-gray-900">How to Set Up Initial Compliance Rules</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Learn how to configure your first compliance rules and monitoring parameters</p>
+                                </div>
+                                <div class="ml-4 flex items-center">
+                                    <span class="bg-qreg-blue text-white text-xs px-2 py-1 rounded">Popular</span>
+                                    <i class="fas fa-chevron-right text-gray-400 ml-3"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="block hover:bg-gray-50">
+                        <div class="px-6 py-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-medium text-gray-900">Understanding AI Model Training Results</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Interpret training metrics and optimize your AI compliance models</p>
+                                </div>
+                                <div class="ml-4 flex items-center">
+                                    <span class="bg-purple-600 text-white text-xs px-2 py-1 rounded">New</span>
+                                    <i class="fas fa-chevron-right text-gray-400 ml-3"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="block hover:bg-gray-50">
+                        <div class="px-6 py-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-medium text-gray-900">Creating Custom Compliance Reports</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Build tailored reports for regulatory submissions and internal audits</p>
+                                </div>
+                                <div class="ml-4 flex items-center">
+                                    <i class="fas fa-chevron-right text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="block hover:bg-gray-50">
+                        <div class="px-6 py-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-medium text-gray-900">API Integration Best Practices</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Connect external systems and automate compliance workflows</p>
+                                </div>
+                                <div class="ml-4 flex items-center">
+                                    <i class="fas fa-chevron-right text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Video Tutorials -->
+    <div class="bg-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">Video Tutorials</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-200">
+                        <div class="flex items-center justify-center">
+                            <i class="fas fa-play-circle text-qreg-blue text-6xl opacity-75"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-gray-900 mb-2">Platform Overview (10:30)</h3>
+                        <p class="text-sm text-gray-600">Complete walkthrough of the QReg Admin Platform features and capabilities</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-200">
+                        <div class="flex items-center justify-center">
+                            <i class="fas fa-play-circle text-qreg-blue text-6xl opacity-75"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-gray-900 mb-2">AI Training Walkthrough (15:45)</h3>
+                        <p class="text-sm text-gray-600">Step-by-step guide to training and deploying AI compliance models</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-200">
+                        <div class="flex items-center justify-center">
+                            <i class="fas fa-play-circle text-qreg-blue text-6xl opacity-75"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-gray-900 mb-2">Report Generation (8:20)</h3>
+                        <p class="text-sm text-gray-600">Learn how to create, customize, and schedule compliance reports</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Support -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-gradient-to-r from-qreg-navy to-qreg-blue rounded-lg p-8">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-white mb-4">Need Additional Help?</h2>
+                <p class="text-blue-100 mb-8">Can't find what you're looking for? Our support team is ready to assist you.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#" class="bg-white text-qreg-navy px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-envelope mr-2"></i>Email Support
+                    </a>
+                    <a href="#" class="bg-qreg-accent text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-comments mr-2"></i>Live Chat
+                    </a>
+                    <a href="#" class="border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-qreg-navy transition-colors">
+                        <i class="fas fa-phone mr-2"></i>Schedule Call
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-qreg-navy">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-2">
+                    <h3 class="text-white text-lg font-semibold mb-4">QReg Help Center</h3>
+                    <p class="text-gray-300 text-sm">
+                        Comprehensive support resources for the QReg Admin Platform. Find guides, tutorials, and get expert assistance.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-white text-sm">Dashboard</a></li>
+                        <li><a href="ai-training.html" class="text-gray-300 hover:text-white text-sm">AI Training</a></li>
+                        <li><a href="reports-dashboard.html" class="text-gray-300 hover:text-white text-sm">Reports</a></li>
+                        <li><a href="settings-config.html" class="text-gray-300 hover:text-white text-sm">Settings</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white text-sm font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white text-sm">Documentation</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white text-sm">API Reference</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white text-sm">Contact Support</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white text-sm">Status Page</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-gray-700 pt-8">
+                <p class="text-gray-400 text-sm text-center">
+                    © 2025 QReg Admin Platform. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

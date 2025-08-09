@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Administration - QReg Admin</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #FEFEFE;
+            color: #2B2D42;
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #FEFEFE;
+            border-right: 1px solid #EDF2F4;
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 24px 32px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1B4332;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-header {
+            padding: 8px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8D99AE;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #8D99AE;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: #F8F9FA;
+            color: #2B2D42;
+        }
+
+        .nav-item.active {
+            background: #1B4332;
+            color: #FFFFFF;
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #EDF2F4;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #D62828;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1B4332;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 32px;
+        }
+
+        /* System Status Header */
+        .system-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: linear-gradient(135deg, #1B4332 0%, #2D5A47 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        .status-overview {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .system-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #40916C;
+            box-shadow: 0 0 12px rgba(64,145,108,0.6);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .status-text {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .emergency-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Health Metrics Grid */
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .health-card {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .health-card.critical {
+            border-color: #D62828;
+            background: linear-gradient(145deg, #FFFFFF, #FFF5F5);
+        }
+
+        .health-card.warning {
+            border-color: #F77F00;
+            background: linear-gradient(145deg, #FFFFFF, #FFFBF5);
+        }
+
+        .health-card.good {
+            border-color: #40916C;
+            background: linear-gradient(145deg, #FFFFFF, #F8FDF9);
+        }
+
+        .health-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .health-value.good {
+            color: #40916C;
+        }
+
+        .health-value.warning {
+            color: #F77F00;
+        }
+
+        .health-value.critical {
+            color: #D62828;
+        }
+
+        .health-label {
+            font-size: 14px;
+            color: #8D99AE;
+            margin-bottom: 8px;
+        }
+
+        .health-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .health-status.good {
+            background: #E8F5E9;
+            color: #40916C;
+        }
+
+        .health-status.warning {
+            background: #FFF8E1;
+            color: #F77F00;
+        }
+
+        .health-status.critical {
+            background: #FFEBEE;
+            color: #D62828;
+        }
+
+        /* System Components Grid */
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .component-card {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #EDF2F4;
+        }
+
+        .component-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .component-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.green {
+            background: #40916C;
+        }
+
+        .status-dot.yellow {
+            background: #F77F00;
+        }
+
+        .status-dot.red {
+            background: #D62828;
+        }
+
+        /* Service List */
+        .service-list {
+            list-style: none;
+        }
+
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #F8F9FA;
+        }
+
+        .service-item:last-child {
+            border-bottom: none;
+        }
+
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .service-name {
+            font-weight: 500;
+            color: #2B2D42;
+        }
+
+        .service-details {
+            font-size: 12px;
+            color: #8D99AE;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Resource Usage Bars */
+        .resource-bar {
+            width: 100%;
+            height: 8px;
+            background: #EDF2F4;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .resource-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .resource-fill.low {
+            background: #40916C;
+        }
+
+        .resource-fill.medium {
+            background: #F77F00;
+        }
+
+        .resource-fill.high {
+            background: #D62828;
+        }
+
+        /* Alert Management */
+        .alert-section {
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .alert-list {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .alert-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid #EDF2F4;
+        }
+
+        .alert-item:last-child {
+            border-bottom: none;
+        }
+
+        .alert-item.critical {
+            background: linear-gradient(90deg, rgba(214,40,40,0.1) 0%, transparent 100%);
+            border-left: 4px solid #D62828;
+        }
+
+        .alert-item.warning {
+            background: linear-gradient(90deg, rgba(247,127,0,0.1) 0%, transparent 100%);
+            border-left: 4px solid #F77F00;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: #2B2D42;
+            margin-bottom: 4px;
+        }
+
+        .alert-description {
+            font-size: 14px;
+            color: #8D99AE;
+        }
+
+        .alert-timestamp {
+            font-size: 12px;
+            color: #8D99AE;
+            margin-right: 16px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #1B4332;
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            background: #2D5A47;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1B4332;
+            border: 1px solid #1B4332;
+        }
+
+        .btn-secondary:hover {
+            background: #EDF2F4;
+        }
+
+        .btn-danger {
+            background: #D62828;
+            color: #FFFFFF;
+        }
+
+        .btn-danger:hover {
+            background: #B71C1C;
+        }
+
+        .btn-warning {
+            background: #F77F00;
+            color: #FFFFFF;
+        }
+
+        .btn-warning:hover {
+            background: #E66100;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        /* Configuration Panel */
+        .config-panel {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .config-header {
+            margin-bottom: 24px;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .config-item {
+            padding: 16px;
+            background: #F8F9FA;
+            border-radius: 8px;
+        }
+
+        .config-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2B2D42;
+            margin-bottom: 8px;
+        }
+
+        .config-value {
+            font-size: 16px;
+            color: #1B4332;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #EDF2F4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            color: #8D99AE;
+        }
+
+        .modal-close:hover {
+            background: #F8F9FA;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1199px) {
+            .health-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .config-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .health-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">QReg Admin</div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Business Dashboard</div>
+                <a href="qreg-admin-dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Main Dashboard</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Regulatory Data</div>
+                <a href="regulatory-monitor.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Data Sources Monitor</span>
+                </a>
+                <a href="document-library.html" class="nav-item">
+                    <span class="nav-icon">📄</span>
+                    <span>Document Library</span>
+                </a>
+                <a href="graph-rag.html" class="nav-item">
+                    <span class="nav-icon">🌐</span>
+                    <span>Graph RAG</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">✅</span>
+                    <span>Collection Health</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">AI System</div>
+                <a href="ai-performance.html" class="nav-item">
+                    <span class="nav-icon">🤖</span>
+                    <span>Performance Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">🎯</span>
+                    <span>Quality Control</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">⚖️</span>
+                    <span>Bias Correction</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Users & Subscriptions</div>
+                <a href="user-management.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>User Management</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span>Subscription Dashboard</span>
+                </a>
+                <a href="payment-management.html" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Payment Management</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Analytics</div>
+                <a href="analytics-dashboard.html" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span>Business Analytics</span>
+                </a>
+                <a href="analytics-dashboard.html#platform-usage" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">📊</span>
+                    <span>Platform Usage</span>
+                </a>
+                <a href="analytics-dashboard.html#business-intelligence" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">💡</span>
+                    <span>Business Intelligence</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">System Admin</div>
+                <a href="system-admin.html" class="nav-item active">
+                    <span class="nav-icon">⚕️</span>
+                    <span>System Health</span>
+                </a>
+                <a href="#alerts" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">🚨</span>
+                    <span>Alerts</span>
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">System Administration</h1>
+                </div>
+                <div class="header-right">
+                    <div class="notification-badge">
+                        <span>🔔</span>
+                        <span class="notification-count">5</span>
+                    </div>
+                    <div class="profile-menu">
+                        <div class="avatar">JW</div>
+                        <span>John Wong</span>
+                        <span>▼</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- System Status Header -->
+                <div class="system-status-header">
+                    <div class="status-overview">
+                        <div class="system-indicator"></div>
+                        <div>
+                            <div class="status-text">🟢 All Systems Operational</div>
+                            <div style="font-size: 14px; opacity: 0.9;">Last checked: 2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="emergency-controls">
+                        <button class="btn btn-warning" onclick="maintenanceMode()">Maintenance Mode</button>
+                        <button class="btn btn-danger" onclick="openModal('emergency-modal')">Emergency Actions</button>
+                    </div>
+                </div>
+                
+                <!-- Health Metrics -->
+                <div class="health-grid">
+                    <div class="health-card good">
+                        <div class="health-value good">99.8%</div>
+                        <div class="health-label">System Uptime</div>
+                        <div class="health-status good">Excellent</div>
+                    </div>
+                    
+                    <div class="health-card warning">
+                        <div class="health-value warning">78%</div>
+                        <div class="health-label">CPU Usage</div>
+                        <div class="health-status warning">High Load</div>
+                    </div>
+                    
+                    <div class="health-card good">
+                        <div class="health-value good">54%</div>
+                        <div class="health-label">Memory Usage</div>
+                        <div class="health-status good">Normal</div>
+                    </div>
+                    
+                    <div class="health-card good">
+                        <div class="health-value good">1.2s</div>
+                        <div class="health-label">Response Time</div>
+                        <div class="health-status good">Fast</div>
+                    </div>
+                </div>
+                
+                <!-- System Components -->
+                <div class="components-grid">
+                    <div class="component-card">
+                        <div class="component-header">
+                            <h3 class="component-title">🖥️ Core Services</h3>
+                            <div class="component-status">
+                                <span class="status-dot green"></span>
+                                <span>4/4 Running</span>
+                            </div>
+                        </div>
+                        <ul class="service-list">
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">API Gateway</div>
+                                        <div class="service-details">Port 8080 • 2.1s avg response</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">Logs</button>
+                                    <button class="btn btn-small btn-primary">Restart</button>
+                                </div>
+                            </li>
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">AI Engine</div>
+                                        <div class="service-details">GPU usage: 45% • 1,247 queries today</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">Monitor</button>
+                                    <button class="btn btn-small btn-primary">Scale</button>
+                                </div>
+                            </li>
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">Document Processor</div>
+                                        <div class="service-details">479 docs processed today</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">Queue</button>
+                                    <button class="btn btn-small btn-primary">Config</button>
+                                </div>
+                            </li>
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">Auth Service</div>
+                                        <div class="service-details">127 active sessions</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">Sessions</button>
+                                    <button class="btn btn-small btn-primary">Reset</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <h3 class="component-title">💾 Database Systems</h3>
+                            <div class="component-status">
+                                <span class="status-dot green"></span>
+                                <span>3/3 Healthy</span>
+                            </div>
+                        </div>
+                        <ul class="service-list">
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">PostgreSQL Primary</div>
+                                        <div class="service-details">Connection pool: 85/100</div>
+                                    </div>
+                                </div>
+                                <div class="resource-bar">
+                                    <div class="resource-fill high" style="width: 85%;"></div>
+                                </div>
+                            </li>
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">Redis Cache</div>
+                                        <div class="service-details">Memory: 2.3GB/4GB used</div>
+                                    </div>
+                                </div>
+                                <div class="resource-bar">
+                                    <div class="resource-fill medium" style="width: 58%;"></div>
+                                </div>
+                            </li>
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">ElasticSearch</div>
+                                        <div class="service-details">Index size: 12.4GB</div>
+                                    </div>
+                                </div>
+                                <div class="resource-bar">
+                                    <div class="resource-fill low" style="width: 32%;"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <h3 class="component-title">🔄 Background Jobs</h3>
+                            <div class="component-status">
+                                <span class="status-dot yellow"></span>
+                                <span>2 Queued</span>
+                            </div>
+                        </div>
+                        <ul class="service-list">
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">Data Collection</div>
+                                        <div class="service-details">Running • SFC circular scan</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">View</button>
+                                    <button class="btn btn-small btn-danger">Stop</button>
+                                </div>
+                            </li>
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot yellow"></span>
+                                    <div>
+                                        <div class="service-name">AI Model Training</div>
+                                        <div class="service-details">Queued • Bias correction batch</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">Priority</button>
+                                    <button class="btn btn-small btn-primary">Start</button>
+                                </div>
+                            </li>
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot yellow"></span>
+                                    <div>
+                                        <div class="service-name">Backup Process</div>
+                                        <div class="service-details">Queued • Daily backup</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">Schedule</button>
+                                    <button class="btn btn-small btn-primary">Run Now</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <h3 class="component-title">🌐 External Integrations</h3>
+                            <div class="component-status">
+                                <span class="status-dot green"></span>
+                                <span>All Connected</span>
+                            </div>
+                        </div>
+                        <ul class="service-list">
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">Stripe API</div>
+                                        <div class="service-details">Last sync: 5 min ago</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">Test</button>
+                                    <button class="btn btn-small btn-primary">Sync</button>
+                                </div>
+                            </li>
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">SendGrid Email</div>
+                                        <div class="service-details">89 emails sent today</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">Stats</button>
+                                    <button class="btn btn-small btn-primary">Config</button>
+                                </div>
+                            </li>
+                            <li class="service-item">
+                                <div class="service-info">
+                                    <span class="status-dot green"></span>
+                                    <div>
+                                        <div class="service-name">AWS S3</div>
+                                        <div class="service-details">Storage: 234GB used</div>
+                                    </div>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-small btn-secondary">Usage</button>
+                                    <button class="btn btn-small btn-primary">Clean</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- System Configuration -->
+                <div class="config-panel">
+                    <div class="config-header">
+                        <h3 class="section-title">🔧 System Configuration</h3>
+                        <button class="btn btn-primary" onclick="openModal('config-modal')">Edit Config</button>
+                    </div>
+                    <div class="config-grid">
+                        <div class="config-item">
+                            <div class="config-label">API Rate Limit</div>
+                            <div class="config-value">1000 req/hour</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Max File Size</div>
+                            <div class="config-value">50MB</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Session Timeout</div>
+                            <div class="config-value">24 hours</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">AI Response Cache</div>
+                            <div class="config-value">2 hours TTL</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Backup Frequency</div>
+                            <div class="config-value">Daily @ 2:00 AM</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">Log Retention</div>
+                            <div class="config-value">30 days</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alert Management -->
+                <div class="alert-section" id="alerts">
+                    <div class="section-header">
+                        <h3 class="section-title">🚨 System Alerts & Issues</h3>
+                        <div>
+                            <button class="btn btn-secondary" onclick="clearAlerts()">Clear All</button>
+                            <button class="btn btn-primary" onclick="openModal('alert-config-modal')">Alert Settings</button>
+                        </div>
+                    </div>
+                    <div class="alert-list">
+                        <div class="alert-item critical">
+                            <div class="alert-content">
+                                <div class="alert-title">High CPU Usage Detected</div>
+                                <div class="alert-description">API server CPU usage has exceeded 75% for 10+ minutes</div>
+                            </div>
+                            <div class="alert-timestamp">15 min ago</div>
+                            <div>
+                                <button class="btn btn-small btn-primary">Investigate</button>
+                                <button class="btn btn-small btn-secondary">Dismiss</button>
+                            </div>
+                        </div>
+                        
+                        <div class="alert-item warning">
+                            <div class="alert-content">
+                                <div class="alert-title">Database Connection Pool Warning</div>
+                                <div class="alert-description">PostgreSQL connection pool utilization at 85%</div>
+                            </div>
+                            <div class="alert-timestamp">1 hour ago</div>
+                            <div>
+                                <button class="btn btn-small btn-primary">Scale</button>
+                                <button class="btn btn-small btn-secondary">Dismiss</button>
+                            </div>
+                        </div>
+                        
+                        <div class="alert-item warning">
+                            <div class="alert-content">
+                                <div class="alert-title">Background Job Queue Building</div>
+                                <div class="alert-description">2 jobs waiting in queue, consider scaling workers</div>
+                            </div>
+                            <div class="alert-timestamp">2 hours ago</div>
+                            <div>
+                                <button class="btn btn-small btn-primary">Add Workers</button>
+                                <button class="btn btn-small btn-secondary">Dismiss</button>
+                            </div>
+                        </div>
+                        
+                        <div class="alert-item">
+                            <div class="alert-content">
+                                <div class="alert-title">Scheduled Maintenance Reminder</div>
+                                <div class="alert-description">AI model training scheduled for 2:00 AM HKT tomorrow</div>
+                            </div>
+                            <div class="alert-timestamp">4 hours ago</div>
+                            <div>
+                                <button class="btn btn-small btn-secondary">Reschedule</button>
+                                <button class="btn btn-small btn-secondary">Dismiss</button>
+                            </div>
+                        </div>
+                        
+                        <div class="alert-item">
+                            <div class="alert-content">
+                                <div class="alert-title">Daily Backup Completed</div>
+                                <div class="alert-description">System backup completed successfully (234GB archived)</div>
+                            </div>
+                            <div class="alert-timestamp">6 hours ago</div>
+                            <div>
+                                <button class="btn btn-small btn-secondary">View Log</button>
+                                <button class="btn btn-small btn-secondary">Dismiss</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Emergency Actions Modal -->
+    <div id="emergency-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🚨 Emergency System Actions</h2>
+                <button class="modal-close" onclick="closeModal('emergency-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 24px;">
+                    <div style="background: #FFEBEE; padding: 16px; border-radius: 8px; border-left: 4px solid #D62828; margin-bottom: 24px;">
+                        <div style="font-weight: 600; color: #D62828; margin-bottom: 8px;">⚠️ Critical Actions</div>
+                        <div style="font-size: 14px; color: #8D99AE;">These actions will immediately affect system availability</div>
+                    </div>
+                    
+                    <div style="display: grid; gap: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid #EDF2F4; border-radius: 8px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px;">Emergency Shutdown</div>
+                                <div style="font-size: 14px; color: #8D99AE;">Immediately stop all services</div>
+                            </div>
+                            <button class="btn btn-danger" onclick="emergencyShutdown()">Shutdown</button>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid #EDF2F4; border-radius: 8px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px;">Force Restart All</div>
+                                <div style="font-size: 14px; color: #8D99AE;">Restart all system services</div>
+                            </div>
+                            <button class="btn btn-warning" onclick="forceRestart()">Restart All</button>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid #EDF2F4; border-radius: 8px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px;">Maintenance Mode</div>
+                                <div style="font-size: 14px; color: #8D99AE;">Enable maintenance mode for all users</div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="maintenanceMode()">Enable</button>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid #EDF2F4; border-radius: 8px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px;">Clear All Caches</div>
+                                <div style="font-size: 14px; color: #8D99AE;">Flush Redis and application caches</div>
+                            </div>
+                            <button class="btn btn-primary" onclick="clearCaches()">Clear Caches</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration Modal -->
+    <div id="config-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🔧 System Configuration</h2>
+                <button class="modal-close" onclick="closeModal('config-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 24px;">
+                    <h4 style="margin-bottom: 16px;">Performance Settings</h4>
+                    <div style="display: grid; gap: 16px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">API Rate Limit (requests/hour)</label>
+                            <input type="number" value="1000" style="width: 100%; padding: 8px; border: 1px solid #EDF2F4; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Max File Upload Size (MB)</label>
+                            <input type="number" value="50" style="width: 100%; padding: 8px; border: 1px solid #EDF2F4; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Session Timeout (hours)</label>
+                            <input type="number" value="24" style="width: 100%; padding: 8px; border: 1px solid #EDF2F4; border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="margin-bottom: 16px;">Cache Settings</h4>
+                    <div style="display: grid; gap: 16px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">AI Response Cache TTL (hours)</label>
+                            <input type="number" value="2" style="width: 100%; padding: 8px; border: 1px solid #EDF2F4; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Document Cache Size (MB)</label>
+                            <input type="number" value="512" style="width: 100%; padding: 8px; border: 1px solid #EDF2F4; border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #EDF2F4;">
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button class="btn btn-secondary" onclick="closeModal('config-modal')">Cancel</button>
+                        <button class="btn btn-primary" onclick="saveConfiguration()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Configuration Modal -->
+    <div id="alert-config-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🚨 Alert Configuration</h2>
+                <button class="modal-close" onclick="closeModal('alert-config-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 24px;">
+                    <h4 style="margin-bottom: 16px;">Alert Thresholds</h4>
+                    <div style="display: grid; gap: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>CPU Usage Alert</span>
+                            <input type="number" value="75" style="width: 80px; padding: 4px; border: 1px solid #EDF2F4; border-radius: 4px;">
+                            <span>%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Memory Usage Alert</span>
+                            <input type="number" value="80" style="width: 80px; padding: 4px; border: 1px solid #EDF2F4; border-radius: 4px;">
+                            <span>%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Response Time Alert</span>
+                            <input type="number" value="5" style="width: 80px; padding: 4px; border: 1px solid #EDF2F4; border-radius: 4px;">
+                            <span>seconds</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Queue Size Alert</span>
+                            <input type="number" value="10" style="width: 80px; padding: 4px; border: 1px solid #EDF2F4; border-radius: 4px;">
+                            <span>jobs</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="margin-bottom: 16px;">Notification Settings</h4>
+                    <div style="display: grid; gap: 12px;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" checked>
+                            <span>Email alerts to admin</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" checked>
+                            <span>Slack notifications</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox">
+                            <span>SMS for critical alerts</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #EDF2F4;">
+                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button class="btn btn-secondary" onclick="closeModal('alert-config-modal')">Cancel</button>
+                        <button class="btn btn-primary" onclick="saveAlertConfig()">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Preserve sidebar scroll position
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            
+            // Restore scroll position on page load
+            const savedScrollPos = sessionStorage.getItem('sidebarScrollPos');
+            if (savedScrollPos && sidebar) {
+                sidebar.scrollTop = parseInt(savedScrollPos);
+            }
+            
+            // Save scroll position before page unload
+            window.addEventListener('beforeunload', function() {
+                if (sidebar) {
+                    sessionStorage.setItem('sidebarScrollPos', sidebar.scrollTop);
+                }
+            });
+            
+            // Prevent navigation when clicking on active page link
+            const activeLink = document.querySelector('.nav-item.active');
+            if (activeLink) {
+                activeLink.addEventListener('click', function(e) {
+                    if (this.getAttribute('href') === 'system-admin.html') {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+        
+        // Modal functionality
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Emergency actions
+        function emergencyShutdown() {
+            if (confirm('Are you sure you want to emergency shutdown? This will stop all services immediately.')) {
+                const btn = event.target;
+                btn.textContent = 'Shutting Down...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    alert('Emergency shutdown initiated. System stopping...');
+                    closeModal('emergency-modal');
+                    btn.textContent = 'Shutdown';
+                    btn.disabled = false;
+                }, 2000);
+            }
+        }
+
+        function forceRestart() {
+            if (confirm('Are you sure you want to restart all services? This will cause temporary downtime.')) {
+                const btn = event.target;
+                btn.textContent = 'Restarting...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = 'Restarted ✓';
+                    btn.style.background = '#40916C';
+                    setTimeout(() => {
+                        btn.textContent = 'Restart All';
+                        btn.style.background = '';
+                        btn.disabled = false;
+                        closeModal('emergency-modal');
+                    }, 2000);
+                }, 3000);
+            }
+        }
+
+        function maintenanceMode() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Enabling...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Enabled ✓';
+                btn.style.background = '#F77F00';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                }, 2000);
+            }, 1500);
+        }
+
+        function clearCaches() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Clearing...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Cleared ✓';
+                btn.style.background = '#40916C';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                }, 2000);
+            }, 2000);
+        }
+
+        // Configuration actions
+        function saveConfiguration() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Saved ✓';
+                btn.style.background = '#40916C';
+                setTimeout(() => {
+                    closeModal('config-modal');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                }, 1500);
+            }, 2000);
+        }
+
+        function saveAlertConfig() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.textContent = 'Saved ✓';
+                btn.style.background = '#40916C';
+                setTimeout(() => {
+                    closeModal('alert-config-modal');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                }, 1500);
+            }, 2000);
+        }
+
+        // Alert management
+        function clearAlerts() {
+            if (confirm('Clear all alerts? This action cannot be undone.')) {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Clearing...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = 'Cleared ✓';
+                    btn.style.background = '#40916C';
+                    btn.style.color = 'white';
+                    
+                    // Hide alert items with animation
+                    const alerts = document.querySelectorAll('.alert-item');
+                    alerts.forEach((alert, index) => {
+                        setTimeout(() => {
+                            alert.style.opacity = '0.5';
+                            alert.style.textDecoration = 'line-through';
+                        }, index * 200);
+                    });
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                        btn.style.background = '';
+                        btn.style.color = '';
+                    }, 3000);
+                }, 1000);
+            }
+        }
+
+        // Real-time updates simulation
+        function updateSystemMetrics() {
+            // Update CPU usage
+            const cpuValue = document.querySelector('.health-card.warning .health-value');
+            if (cpuValue) {
+                const currentCpu = parseInt(cpuValue.textContent);
+                const newCpu = Math.max(65, Math.min(85, currentCpu + Math.floor(Math.random() * 6) - 3));
+                cpuValue.textContent = newCpu + '%';
+                
+                // Update status color based on value
+                const healthCard = cpuValue.closest('.health-card');
+                const statusElement = healthCard.querySelector('.health-status');
+                
+                if (newCpu > 80) {
+                    healthCard.className = 'health-card critical';
+                    cpuValue.className = 'health-value critical';
+                    statusElement.className = 'health-status critical';
+                    statusElement.textContent = 'Critical';
+                } else if (newCpu > 70) {
+                    healthCard.className = 'health-card warning';
+                    cpuValue.className = 'health-value warning';
+                    statusElement.className = 'health-status warning';
+                    statusElement.textContent = 'High Load';
+                } else {
+                    healthCard.className = 'health-card good';
+                    cpuValue.className = 'health-value good';
+                    statusElement.className = 'health-status good';
+                    statusElement.textContent = 'Normal';
+                }
+            }
+            
+            // Update memory usage
+            const memoryValue = document.querySelector('.health-card.good .health-value');
+            if (memoryValue && memoryValue.textContent.includes('%')) {
+                const currentMemory = parseInt(memoryValue.textContent);
+                const newMemory = Math.max(45, Math.min(70, currentMemory + Math.floor(Math.random() * 4) - 2));
+                memoryValue.textContent = newMemory + '%';
+            }
+        }
+
+        // Update metrics every 15 seconds
+        setInterval(updateSystemMetrics, 15000);
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for service actions
+            document.querySelectorAll('.service-actions .btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const action = this.textContent;
+                    const originalText = this.textContent;
+                    
+                    this.textContent = 'Working...';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        this.textContent = 'Done ✓';
+                        this.style.background = '#40916C';
+                        this.style.color = 'white';
+                        
+                        setTimeout(() => {
+                            this.textContent = originalText;
+                            this.disabled = false;
+                            this.style.background = '';
+                            this.style.color = '';
+                        }, 1500);
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI System Performance - QReg Admin</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #FEFEFE;
+            color: #2B2D42;
+            line-height: 1.6;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #FEFEFE;
+            border-right: 1px solid #EDF2F4;
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            padding: 0 24px 32px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1B4332;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-header {
+            padding: 8px 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8D99AE;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #8D99AE;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: #F8F9FA;
+            color: #2B2D42;
+        }
+
+        .nav-item.active {
+            background: #1B4332;
+            color: #FFFFFF;
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #EDF2F4;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: #8D99AE;
+            margin-left: 16px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #D62828;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1B4332;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Page Content */
+        .page-content {
+            padding: 32px;
+        }
+
+        /* Enhanced Performance Overview */
+        .performance-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .metric-card:hover .metric-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .metric-card:hover .metric-value {
+            color: #40916C;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #40916C, #52B788);
+        }
+
+        .metric-card.warning::before {
+            background: linear-gradient(90deg, #F77F00, #FFB84D);
+        }
+
+        .metric-card.error::before {
+            background: linear-gradient(90deg, #D62828, #FF6B6B);
+        }
+
+        .metric-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: inline-block;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2B2D42;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: #8D99AE;
+            margin-bottom: 12px;
+        }
+
+        .metric-change {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .metric-change.positive {
+            color: #40916C;
+        }
+
+        .metric-change.negative {
+            color: #D62828;
+        }
+
+        .metric-change.neutral {
+            color: #8D99AE;
+        }
+
+        /* Performance Charts */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #EDF2F4;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .time-selector {
+            padding: 6px 12px;
+            border: 1px solid #EDF2F4;
+            border-radius: 6px;
+            background: transparent;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .time-selector.active {
+            background: #1B4332;
+            color: white;
+            border-color: #1B4332;
+        }
+
+        .time-selector:hover {
+            background: #F8F9FA;
+        }
+
+        /* Mock Chart Visualization */
+        .chart-area {
+            height: 300px;
+            background: linear-gradient(135deg, #E8F5E9 0%, #F8F9FA 100%);
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: end;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .chart-placeholder {
+            display: flex;
+            align-items: end;
+            gap: 8px;
+            height: 100%;
+        }
+
+        .chart-bar {
+            background: linear-gradient(to top, #40916C, #52B788);
+            border-radius: 4px 4px 0 0;
+            min-width: 20px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.9;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(64, 145, 108, 0.3);
+        }
+
+        .chart-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+            border-radius: 4px 4px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .chart-bar:hover::before {
+            opacity: 1;
+        }
+
+        .chart-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2B2D42;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .chart-bar:hover::after {
+            opacity: 1;
+        }
+
+        /* AI Model Status */
+        .model-status {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 32px;
+        }
+
+        .model-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .model-item {
+            padding: 20px;
+            border: 1px solid #EDF2F4;
+            border-radius: 8px;
+            background: #F8F9FA;
+        }
+
+        .model-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .model-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #1B4332;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .model-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2B2D42;
+            margin-bottom: 4px;
+        }
+
+        .model-version {
+            font-size: 12px;
+            color: #8D99AE;
+        }
+
+        .model-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .model-metric {
+            text-align: center;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .model-metric-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2B2D42;
+        }
+
+        .model-metric-label {
+            font-size: 10px;
+            color: #8D99AE;
+            text-transform: uppercase;
+        }
+
+        .model-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.active {
+            background: #40916C;
+        }
+
+        .status-dot.training {
+            background: #F77F00;
+        }
+
+        .status-dot.error {
+            background: #D62828;
+        }
+
+        /* Test Results */
+        .test-results {
+            background: #FFFFFF;
+            border: 1px solid #EDF2F4;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .test-header {
+            padding: 24px;
+            border-bottom: 1px solid #EDF2F4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .test-body {
+            padding: 24px;
+        }
+
+        .test-list {
+            list-style: none;
+        }
+
+        .test-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #F8F9FA;
+        }
+
+        .test-item:last-child {
+            border-bottom: none;
+        }
+
+        .test-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .test-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .test-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2B2D42;
+            margin-bottom: 4px;
+        }
+
+        .test-meta {
+            font-size: 12px;
+            color: #8D99AE;
+        }
+
+        .test-score {
+            text-align: right;
+        }
+
+        .score-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .score-trend {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #1B4332;
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            background: #2D5A47;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1B4332;
+            border: 1px solid #1B4332;
+        }
+
+        .btn-secondary:hover {
+            background: #EDF2F4;
+        }
+
+        .btn-success {
+            background: #40916C;
+            color: #FFFFFF;
+        }
+
+        .btn-success:hover {
+            background: #2D5A47;
+        }
+
+        .btn-warning {
+            background: #F77F00;
+            color: #FFFFFF;
+        }
+
+        .btn-warning:hover {
+            background: #E56F00;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .performance-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .page-content {
+                padding: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .performance-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        .loading-spinner {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pulse-effect {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">QReg Admin</div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Business Dashboard</div>
+                <a href="qreg-admin-dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Main Dashboard</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Regulatory Data</div>
+                <a href="regulatory-monitor.html" class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Data Sources Monitor</span>
+                </a>
+                <a href="regulatory-monitor.html#collection-health" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">✅</span>
+                    <span>Collection Health</span>
+                </a>
+                <a href="document-library.html" class="nav-item">
+                    <span class="nav-icon">📄</span>
+                    <span>Document Library</span>
+                </a>
+                <a href="graph-rag.html" class="nav-item">
+                    <span class="nav-icon">🌐</span>
+                    <span>Graph RAG</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">AI System</div>
+                <a href="ai-performance.html" class="nav-item active">
+                    <span class="nav-icon">🤖</span>
+                    <span>Performance Dashboard</span>
+                </a>
+                <a href="#quality-control" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">🎯</span>
+                    <span>Quality Control</span>
+                </a>
+                <a href="#bias-correction" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">⚖️</span>
+                    <span>Bias Correction</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Analytics</div>
+                <a href="analytics-dashboard.html" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span>Business Analytics</span>
+                </a>
+                <a href="analytics-dashboard.html#platform-usage" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">📊</span>
+                    <span>Platform Usage</span>
+                </a>
+                <a href="analytics-dashboard.html#business-intelligence" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">💡</span>
+                    <span>Business Intelligence</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">Users & Subscriptions</div>
+                <a href="user-management.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>User Management</span>
+                </a>
+                <a href="user-management.html#subscription-dashboard" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">💳</span>
+                    <span>Subscription Dashboard</span>
+                </a>
+                <a href="payment-management.html" class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Payment Management</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-header">System Admin</div>
+                <a href="system-admin.html" class="nav-item">
+                    <span class="nav-icon">⚕️</span>
+                    <span>System Health</span>
+                </a>
+                <a href="system-admin.html#alerts" class="nav-item" style="padding-left: 48px;">
+                    <span class="nav-icon">🚨</span>
+                    <span>Alerts</span>
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">AI System Performance</h1>
+                    <span class="header-subtitle">Real-time monitoring and analytics for AI models</span>
+                </div>
+                <div class="header-right">
+                    <div class="notification-badge">
+                        <span>🔔</span>
+                        <span class="notification-count">1</span>
+                    </div>
+                    <div class="profile-menu">
+                        <div class="avatar">JW</div>
+                        <span>John Wong</span>
+                        <span>▼</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Performance Overview -->
+                <div class="performance-overview">
+                    <div class="metric-card">
+                        <div class="metric-icon">🎯</div>
+                        <div class="metric-value" id="accuracy-metric">92.4%</div>
+                        <div class="metric-label">Overall Accuracy</div>
+                        <div class="metric-change positive">
+                            <span>↗</span>
+                            <span>+2.1% vs last week</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">⚡</div>
+                        <div class="metric-value">2.1s</div>
+                        <div class="metric-label">Avg Response Time</div>
+                        <div class="metric-change positive">
+                            <span>↘</span>
+                            <span>-0.3s improvement</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">📊</div>
+                        <div class="metric-value">1,247</div>
+                        <div class="metric-label">Queries Today</div>
+                        <div class="metric-change positive">
+                            <span>↗</span>
+                            <span>+15% vs yesterday</span>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">⭐</div>
+                        <div class="metric-value">4.7</div>
+                        <div class="metric-label">User Satisfaction</div>
+                        <div class="metric-change positive">
+                            <span>↗</span>
+                            <span>+0.2 improvement</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Charts -->
+                <div class="charts-section">
+                    <!-- Accuracy Trend Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">📈 Accuracy Trend</h3>
+                            <div class="chart-controls">
+                                <button class="time-selector active" onclick="setTimeRange('24h')">24H</button>
+                                <button class="time-selector" onclick="setTimeRange('7d')">7D</button>
+                                <button class="time-selector" onclick="setTimeRange('30d')">30D</button>
+                            </div>
+                        </div>
+                        <div class="chart-area">
+                            <div class="chart-placeholder">
+                                <div class="chart-bar" style="height: 70%;"></div>
+                                <div class="chart-bar" style="height: 85%;"></div>
+                                <div class="chart-bar" style="height: 60%;"></div>
+                                <div class="chart-bar" style="height: 90%;"></div>
+                                <div class="chart-bar" style="height: 95%;"></div>
+                                <div class="chart-bar" style="height: 88%;"></div>
+                                <div class="chart-bar" style="height: 92%;"></div>
+                                <div class="chart-bar" style="height: 96%;"></div>
+                                <div class="chart-bar" style="height: 89%;"></div>
+                                <div class="chart-bar" style="height: 94%;"></div>
+                                <div class="chart-bar" style="height: 92%;"></div>
+                                <div class="chart-bar" style="height: 97%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Health -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3 class="chart-title">🏥 System Health</h3>
+                        </div>
+                        <div style="padding: 20px 0;">
+                            <div style="text-align: center; margin-bottom: 24px;">
+                                <div style="font-size: 48px; font-weight: 700; color: #40916C; margin-bottom: 8px;">96.8%</div>
+                                <div style="color: #8D99AE;">Overall Health Score</div>
+                            </div>
+                            
+                            <div style="display: grid; gap: 16px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #F8F9FA;">
+                                    <span style="font-size: 14px; color: #2B2D42;">CPU Usage</span>
+                                    <span style="font-weight: 600; color: #40916C;">67%</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #F8F9FA;">
+                                    <span style="font-size: 14px; color: #2B2D42;">Memory Usage</span>
+                                    <span style="font-weight: 600; color: #40916C;">73%</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #F8F9FA;">
+                                    <span style="font-size: 14px; color: #2B2D42;">Model Load</span>
+                                    <span style="font-weight: 600; color: #F77F00;">85%</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                                    <span style="font-size: 14px; color: #2B2D42;">Error Rate</span>
+                                    <span style="font-weight: 600; color: #40916C;">0.3%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Model Status -->
+                <div class="model-status">
+                    <div class="model-header">
+                        <h3 style="font-size: 20px; font-weight: 600; color: #2B2D42; display: flex; align-items: center; gap: 12px;">
+                            <span>🤖</span>
+                            <span>AI Model Status</span>
+                        </h3>
+                        <div>
+                            <button class="btn btn-secondary">🔄 Refresh</button>
+                            <button class="btn btn-primary" onclick="runModelTest()">🧪 Run Test</button>
+                        </div>
+                    </div>
+                    
+                    <div class="model-grid" id="quality-control">
+                        <!-- Primary NLP Model -->
+                        <div class="model-item">
+                            <div class="model-name">
+                                <div class="model-icon">NLP</div>
+                                <div class="model-details">
+                                    <h3>Legal Document Processor</h3>
+                                    <div class="model-version">v2.3.1 • Last trained: 3 days ago</div>
+                                </div>
+                            </div>
+                            <div class="model-metrics">
+                                <div class="model-metric">
+                                    <div class="model-metric-value">94.7%</div>
+                                    <div class="model-metric-label">Precision</div>
+                                </div>
+                                <div class="model-metric">
+                                    <div class="model-metric-value">91.3%</div>
+                                    <div class="model-metric-label">Recall</div>
+                                </div>
+                                <div class="model-metric">
+                                    <div class="model-metric-value">0.92</div>
+                                    <div class="model-metric-label">F1 Score</div>
+                                </div>
+                            </div>
+                            <div class="model-status-indicator">
+                                <span class="status-dot active"></span>
+                                <span>Active • Processing 1,247 queries today</span>
+                            </div>
+                        </div>
+
+                        <!-- Entity Recognition Model -->
+                        <div class="model-item">
+                            <div class="model-name">
+                                <div class="model-icon">NER</div>
+                                <div class="model-details">
+                                    <h3>Entity Recognition Engine</h3>
+                                    <div class="model-version">v1.8.4 • Last trained: 1 week ago</div>
+                                </div>
+                            </div>
+                            <div class="model-metrics">
+                                <div class="model-metric">
+                                    <div class="model-metric-value">96.1%</div>
+                                    <div class="model-metric-label">Precision</div>
+                                </div>
+                                <div class="model-metric">
+                                    <div class="model-metric-value">88.9%</div>
+                                    <div class="model-metric-label">Recall</div>
+                                </div>
+                                <div class="model-metric">
+                                    <div class="model-metric-value">0.89</div>
+                                    <div class="model-metric-label">F1 Score</div>
+                                </div>
+                            </div>
+                            <div class="model-status-indicator">
+                                <span class="status-dot active"></span>
+                                <span>Active • Extracted 2,341 entities today</span>
+                            </div>
+                        </div>
+
+                        <!-- Classification Model -->
+                        <div class="model-item">
+                            <div class="model-name">
+                                <div class="model-icon">CLS</div>
+                                <div class="model-details">
+                                    <h3>Document Classifier</h3>
+                                    <div class="model-version">v3.1.0 • Training in progress</div>
+                                </div>
+                            </div>
+                            <div class="model-metrics">
+                                <div class="model-metric">
+                                    <div class="model-metric-value">89.2%</div>
+                                    <div class="model-metric-label">Precision</div>
+                                </div>
+                                <div class="model-metric">
+                                    <div class="model-metric-value">91.7%</div>
+                                    <div class="model-metric-label">Recall</div>
+                                </div>
+                                <div class="model-metric">
+                                    <div class="model-metric-value">0.90</div>
+                                    <div class="model-metric-label">F1 Score</div>
+                                </div>
+                            </div>
+                            <div class="model-status-indicator">
+                                <span class="status-dot training pulse-effect"></span>
+                                <span>Training • ETA: 4 hours</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Results -->
+                <div class="test-results" id="bias-correction">
+                    <div class="test-header">
+                        <h3 style="font-size: 20px; font-weight: 600; color: #2B2D42; display: flex; align-items: center; gap: 12px;">
+                            <span>🧪</span>
+                            <span>Recent Test Results</span>
+                        </h3>
+                        <div>
+                            <button class="btn btn-secondary">📊 View All</button>
+                            <button class="btn btn-warning">⚠️ Quality Issues</button>
+                        </div>
+                    </div>
+                    <div class="test-body">
+                        <ul class="test-list">
+                            <li class="test-item">
+                                <div class="test-info">
+                                    <div class="test-icon" style="background: #E8F5E9; color: #40916C;">✅</div>
+                                    <div class="test-details">
+                                        <h4>SFC Document Processing Test</h4>
+                                        <div class="test-meta">Completed 2 hours ago • 500 documents • Legal compliance</div>
+                                    </div>
+                                </div>
+                                <div class="test-score">
+                                    <div class="score-value" style="color: #40916C;">94.2%</div>
+                                    <div class="score-trend" style="color: #40916C;">↗ +1.3%</div>
+                                </div>
+                            </li>
+                            
+                            <li class="test-item">
+                                <div class="test-info">
+                                    <div class="test-icon" style="background: #E8F5E9; color: #40916C;">✅</div>
+                                    <div class="test-details">
+                                        <h4>HKMA Banking Regulation Analysis</h4>
+                                        <div class="test-meta">Completed 6 hours ago • 234 documents • Banking law</div>
+                                    </div>
+                                </div>
+                                <div class="test-score">
+                                    <div class="score-value" style="color: #40916C;">96.7%</div>
+                                    <div class="score-trend" style="color: #40916C;">↗ +0.8%</div>
+                                </div>
+                            </li>
+                            
+                            <li class="test-item">
+                                <div class="test-info">
+                                    <div class="test-icon" style="background: #FFF3E0; color: #F77F00;">⚠️</div>
+                                    <div class="test-details">
+                                        <h4>Cross-Reference Validation</h4>
+                                        <div class="test-meta">Completed 8 hours ago • 156 references • Data integrity</div>
+                                    </div>
+                                </div>
+                                <div class="test-score">
+                                    <div class="score-value" style="color: #F77F00;">87.4%</div>
+                                    <div class="score-trend" style="color: #D62828;">↘ -2.1%</div>
+                                </div>
+                            </li>
+                            
+                            <li class="test-item">
+                                <div class="test-info">
+                                    <div class="test-icon" style="background: #E3F2FD; color: #277DA1;">🔍</div>
+                                    <div class="test-details">
+                                        <h4>Entity Extraction Benchmark</h4>
+                                        <div class="test-meta">Completed 12 hours ago • 1,000 entities • NER performance</div>
+                                    </div>
+                                </div>
+                                <div class="test-score">
+                                    <div class="score-value" style="color: #40916C;">92.8%</div>
+                                    <div class="score-trend" style="color: #40916C;">↗ +0.5%</div>
+                                </div>
+                            </li>
+                            
+                            <li class="test-item">
+                                <div class="test-info">
+                                    <div class="test-icon" style="background: #E8F5E9; color: #40916C;">✅</div>
+                                    <div class="test-details">
+                                        <h4>Response Time Load Test</h4>
+                                        <div class="test-meta">Completed yesterday • 2,000 concurrent queries • Performance</div>
+                                    </div>
+                                </div>
+                                <div class="test-score">
+                                    <div class="score-value" style="color: #40916C;">2.1s</div>
+                                    <div class="score-trend" style="color: #40916C;">↗ -0.3s</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Time range selector
+        function setTimeRange(range) {
+            // Remove active class from all selectors
+            document.querySelectorAll('.time-selector').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked selector
+            event.target.classList.add('active');
+            
+            // Update chart data based on range
+            updateChartData(range);
+        }
+
+        function updateChartData(range) {
+            console.log('Updating chart data for range:', range);
+            // In a real implementation, this would fetch new data and update the chart
+            
+            // Simulate different data for different time ranges
+            const bars = document.querySelectorAll('.chart-bar');
+            bars.forEach(bar => {
+                const randomHeight = Math.floor(Math.random() * 40) + 60; // 60-100%
+                bar.style.height = randomHeight + '%';
+            });
+        }
+
+        // Enhanced model test function with delightful feedback
+        function runModelTest() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            
+            // Fun test messages
+            const testingMessages = [
+                '🤖 Initializing AI models...',
+                '🧠 Testing neural networks...',
+                '📊 Analyzing performance...',
+                '⚡ Optimizing algorithms...'
+            ];
+            
+            btn.disabled = true;
+            btn.classList.add('loading-spinner');
+            
+            let messageIndex = 0;
+            const messageInterval = setInterval(() => {
+                btn.textContent = testingMessages[messageIndex];
+                messageIndex++;
+                if (messageIndex >= testingMessages.length) {
+                    clearInterval(messageInterval);
+                }
+            }, 1000);
+            
+            // Add visual feedback to all model cards
+            const modelCards = document.querySelectorAll('.model-item');
+            modelCards.forEach(card => {
+                card.style.opacity = '0.6';
+                card.style.transform = 'scale(0.98)';
+            });
+            
+            setTimeout(() => {
+                clearInterval(messageInterval);
+                
+                // Simulate improvements
+                const accuracyEl = document.getElementById('accuracy-metric');
+                const currentAccuracy = parseFloat(accuracyEl.textContent.replace('%', ''));
+                const improvement = Math.random() * 1.5 + 0.5; // 0.5-2% improvement
+                const newAccuracy = Math.min(98, currentAccuracy + improvement);
+                
+                // Animate the accuracy change
+                animateValue(accuracyEl, currentAccuracy, newAccuracy, 1000, '%');
+                
+                btn.textContent = '🎉 Performance improved!';
+                btn.style.background = '#40916C';
+                btn.classList.remove('loading-spinner');
+                
+                // Restore model cards with celebration
+                modelCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                        card.classList.add('celebration');
+                        
+                        setTimeout(() => {
+                            card.classList.remove('celebration');
+                        }, 600);
+                    }, index * 100);
+                });
+                
+                // Show success toast
+                showSuccessToast('AI models tested successfully! Performance metrics updated.');
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                }, 3000);
+            }, 4000);
+        }
+        
+        // Smooth value animation
+        function animateValue(element, start, end, duration, suffix = '') {
+            const startTime = performance.now();
+            const difference = end - start;
+            
+            function updateValue(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const current = start + (difference * easeOutQuart);
+                
+                element.textContent = current.toFixed(1) + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateValue);
+                }
+            }
+            
+            requestAnimationFrame(updateValue);
+        }
+        
+        // Success toast notification
+        function showSuccessToast(message) {
+            const toast = document.createElement('div');
+            toast.innerHTML = `
+                <span style="font-size: 16px; margin-right: 8px;">✅</span>
+                <span>${message}</span>
+            `;
+            
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #E8F5E9, #D4F1D4);
+                color: #2B2D42;
+                padding: 16px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                transform: translateX(100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border: 2px solid #40916C;
+                max-width: 400px;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 4000);
+        }
+
+        // Auto-update performance metrics
+        function updateMetrics() {
+            const metrics = document.querySelectorAll('[id$="-metric"]');
+            metrics.forEach(metric => {
+                if (metric.textContent.includes('%')) {
+                    const current = parseFloat(metric.textContent.replace('%', ''));
+                    const variation = (Math.random() * 0.6) - 0.3; // ±0.3%
+                    const newValue = Math.max(85, Math.min(98, current + variation));
+                    metric.textContent = newValue.toFixed(1) + '%';
+                }
+            });
+        }
+
+        // Update metrics every 30 seconds
+        setInterval(updateMetrics, 30000);
+
+        // Handle anchor navigation for Quality Control and Bias Correction
+        function handleQualityControlNavigation() {
+            const qualityControlLink = document.querySelector('a[href="#quality-control"]');
+            if (qualityControlLink) {
+                qualityControlLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.getElementById('quality-control');
+                    if (target) {
+                        const offsetTop = target.offsetTop - 20;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                        history.pushState(null, null, '#quality-control');
+                    }
+                });
+            }
+        }
+
+        function handleBiasCorrectionNavigation() {
+            const biasCorrectionLink = document.querySelector('a[href="#bias-correction"]');
+            if (biasCorrectionLink) {
+                biasCorrectionLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.getElementById('bias-correction');
+                    if (target) {
+                        const offsetTop = target.offsetTop - 20;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                        history.pushState(null, null, '#bias-correction');
+                    }
+                });
+            }
+        }
+
+        // Initialize page with enhanced interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('AI Performance Dashboard initialized');
+            
+            // Initialize quality control navigation
+            handleQualityControlNavigation();
+            
+            // Initialize bias correction navigation
+            handleBiasCorrectionNavigation();
+            
+            // Add data attributes and enhanced interactions to chart bars
+            const chartBars = document.querySelectorAll('.chart-bar');
+            const accuracyValues = [89.2, 91.5, 88.7, 93.4, 94.8, 92.1, 93.7, 95.2, 91.8, 94.1, 92.4, 96.1];
+            
+            chartBars.forEach((bar, index) => {
+                bar.setAttribute('data-value', accuracyValues[index] + '% accuracy');
+                bar.setAttribute('title', 'Click for details');
+                
+                bar.addEventListener('click', () => {
+                    // Add click feedback
+                    bar.style.transform = 'translateY(-6px) scale(1.1)';
+                    
+                    setTimeout(() => {
+                        bar.style.transform = '';
+                    }, 200);
+                    
+                    // Show detailed info
+                    showSuccessToast(`Accuracy at this time: ${accuracyValues[index]}%`);
+                });
+            });
+            
+            // Personalized welcome message
+            setTimeout(() => {
+                const title = document.querySelector('.header-title');
+                const originalTitle = title.textContent;
+                
+                title.style.opacity = '0';
+                title.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    title.textContent = 'AI is performing beautifully! 🤖✨';
+                    title.style.opacity = '1';
+                    title.style.transform = 'translateY(0)';
+                    
+                    setTimeout(() => {
+                        title.textContent = originalTitle;
+                    }, 2500);
+                }, 200);
+            }, 1500);
+            
+            // Interactive metric cards
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach((card, index) => {
+                card.setAttribute('title', 'Click for detailed breakdown');
+                
+                card.addEventListener('click', () => {
+                    const metricValue = card.querySelector('.metric-value').textContent;
+                    const metricLabel = card.querySelector('.metric-label').textContent;
+                    
+                    showSuccessToast(`${metricLabel}: ${metricValue} - Looking great!`);
+                });
+            });
+            
+            // Add celebration styles
+            const style = document.createElement('style');
+            style.textContent = `
+                .celebration {
+                    animation: celebrate 0.6s ease-out;
+                }
+                
+                @keyframes celebrate {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                    100% { transform: scale(1); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
